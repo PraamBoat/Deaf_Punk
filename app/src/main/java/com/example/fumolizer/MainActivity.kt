@@ -17,9 +17,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var playing : MusicPlayer = MusicPlayer()
+
         val buttoner = findViewById(R.id.button_main_audioTest) as Button
         buttoner.setOnClickListener {
             Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
+            playing.startMediaPlayer()
         }
     }
 
