@@ -5,7 +5,8 @@ import android.media.audiofx.Equalizer
 private var equalizer: Equalizer? = null
 
 private fun initialzeEqualizer() {
-    equalizer = Equalizer(0, mediaPlayer?.audioSessionId!!)
+    /*equalizer = Equalizer(0, mediaPlayer?.audioSessionId!!)
+    equalizer?.enabled = eqEnabled*/
 }
 
 private fun setupEqualizer() {
