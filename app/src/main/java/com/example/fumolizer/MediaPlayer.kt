@@ -32,11 +32,11 @@ class MediaPlayer : AppCompatActivity() {
         stopMediaPlayer()
     }
 
-    private fun setupMediaPlayer() {
+    public fun setupMediaPlayer() {
         mediaPlayer = MediaPlayer.create(this, R.raw.chasingtheenigma)
     }
 
-    private fun startMediaPlayer() {
+    public fun startMediaPlayer() {
         if (mediaPlayer != null) {
             mediaPlayer?.start()
         }
@@ -46,7 +46,7 @@ class MediaPlayer : AppCompatActivity() {
         }
     }
 
-    private  fun stopMediaPlayer() {
+    public  fun stopMediaPlayer() {
         if (mediaPlayer?.isPlaying == true){
             mediaPlayer?.release()
             mediaPlayer?.stop()
