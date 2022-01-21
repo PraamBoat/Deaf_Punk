@@ -17,13 +17,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var playing : MusicPlayer = MusicPlayer()
+        var playa = MediaPlayer()
 
         val buttoner = findViewById(R.id.button_main_audioTest) as Button
         buttoner.setOnClickListener {
             Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
-            playing.startMediaPlayer()
+
+            playa = MediaPlayer.create(this, R.raw.chasingtheenigma)
+            playa.start()
         }
+
+
     }
 
 

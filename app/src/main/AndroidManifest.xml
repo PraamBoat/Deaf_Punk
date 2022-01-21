@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
         </application>
+        <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"></uses-permission>
 
 
 </manifest>
