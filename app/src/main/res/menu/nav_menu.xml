@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/ic_equalizer"
+        android:icon="@drawable/ic_baseline_equalizer_24"
+        android:title="Equalizer" />
+
+    <item
+        android:id="@+id/ic_volume"
+        android:icon="@drawable/ic_baseline_volume_up_24"
+        android:title="Volume" />
+
+    <item
+        android:id="@+id/ic_fumolizer"
+        android:icon="@drawable/ic_baseline_remove_red_eye_24"
+        android:title="Fumolizer" />
+
+    <item
+        android:id="@+id/ic_compressor"
+        android:icon="@drawable/ic_baseline_headphones_24"
+        android:title="Compressor" />
+
+    <item
+        android:id="@+id/ic_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="Settings" />
+
+</menu>
