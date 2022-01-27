@@ -21,6 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".EqualizerActivity">
+        </activity>
+        <activity android:name=".VolumeActivity"></activity>
+        <activity android:name=".CompressorActivity"></activity>
+        <activity android:name=".SettingsActivity"></activity>
         </application>
         <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"></uses-permission>
 
