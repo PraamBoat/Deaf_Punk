@@ -22,21 +22,25 @@ class CompressorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compressor)
 
+        findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.ic_compressor
         findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.ic_volume -> {
                     val intent = Intent(this, VolumeActivity::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.ic_equalizer -> {
                     val intent = Intent(this, EqualizerActivity::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.ic_fumolizer -> {
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.ic_compressor -> {
@@ -45,6 +49,7 @@ class CompressorActivity : AppCompatActivity() {
                 R.id.ic_settings -> {
                     val intent = Intent(this, SettingsActivity::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 else -> throw AssertionError()

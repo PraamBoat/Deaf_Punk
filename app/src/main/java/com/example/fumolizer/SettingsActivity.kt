@@ -22,26 +22,32 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+
+        findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.ic_settings
         findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.ic_volume -> {
                     val intent = Intent(this, VolumeActivity::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.ic_equalizer -> {
                     val intent = Intent(this, EqualizerActivity::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.ic_fumolizer -> {
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.ic_compressor -> {
                     val intent = Intent(this, CompressorActivity::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.ic_settings -> {

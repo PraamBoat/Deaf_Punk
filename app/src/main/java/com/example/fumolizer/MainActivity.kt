@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, EqualizerActivity::class.java)
             startActivity(intent)
+            finish()
 
         }
 
