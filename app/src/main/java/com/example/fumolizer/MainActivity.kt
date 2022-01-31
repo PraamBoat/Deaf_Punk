@@ -27,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         var change = findViewById(R.id.button2) as Button
         var sessionId = mediaPlayer.getAudioSessionId()
         var equal = findViewById(R.id.button3) as Button
+        var cancel = findViewById(R.id.cancel) as Button
+        var equal1 = Equalizer(0, sessionId)
 
         buttoner.setOnClickListener {
             Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
@@ -40,10 +42,11 @@ class MainActivity : AppCompatActivity() {
         change.setOnClickListener {
             var change1 = PresetReverb(1, sessionId)
             change1.setPreset(PRESET_SMALLROOM)
-            change1.setEnabled(false)
+            change1.setEnabled(true)
 
             mediaPlayer.pause()
             mediaPlayer.start()
+
             if(change1.hasControl()) {
                 Toast.makeText(this, "eqauled", Toast.LENGTH_SHORT).show()
             }
@@ -53,13 +56,30 @@ class MainActivity : AppCompatActivity() {
         }
 
         equal.setOnClickListener{
-            var equal1 = Equalizer(1, sessionId)
-            equal1.setBandLevel(1, 10000)
-            equal1.setEnabled(true)
 
-            if(equal1.hasControl()) {
-                Toast.makeText(this, "eqauled", Toast.LENGTH_SHORT).show()
-            }
+            var numberOfBands = equal1.numberOfBands
+            var lowestBandLevel = equal1.bandLevelRange[0]
+            var highestBandLevel = equal1.bandLevelRange[1]
+            var bandLevel = (100.plus(lowestBandLevel!!)).toShort()
+
+            var bands = ArrayList<Integer>(0)
+            (0 until numberOfBands!!)
+                .map { equal1.getCenterFreq(it.toShort()) }
+                .mapTo(bands) { Integer(it?.div(1000)!!) }
+            Toast.makeText(this, numberOfBands.toString() + " " + lowestBandLevel.toString() + " "
+                    + highestBandLevel.toString() + " " + bandLevel.toString(),Toast.LENGTH_LONG).show()
+            equal1.setBandLevel(1.toShort(), bandLevel)
+            equal1.setBandLevel(2.toShort(), bandLevel)
+            equal1.setBandLevel(3.toShort(), 500.toShort())
+            equal1.setBandLevel(4.toShort(), bandLevel)
+
+            equal1.enabled = true
+
+
+        }
+
+        cancel.setOnClickListener{
+            equal1.enabled = false
         }
     }
 }
