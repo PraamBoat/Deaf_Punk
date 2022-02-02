@@ -3,6 +3,7 @@ package com.example.fumolizer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
+import android.content.Intent
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         var equal = findViewById(R.id.button3) as Button
         var cancel = findViewById(R.id.cancel) as Button
         var equal1 = Equalizer(0, sessionId)
+        var nav = findViewById(R.id.button_main_menu) as Button
 
         buttoner.setOnClickListener {
             Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
@@ -80,6 +82,12 @@ class MainActivity : AppCompatActivity() {
 
         cancel.setOnClickListener{
             equal1.enabled = false
+        }
+
+        nav.setOnClickListener {
+            val intent = Intent(this, EqualizerActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 }
