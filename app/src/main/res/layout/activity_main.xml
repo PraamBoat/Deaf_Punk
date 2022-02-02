@@ -2,8 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <com.gauravk.audiovisualizer.visualizer.BlobVisualizer
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/visual"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        custom:avDensity="0.8"
+        custom:avType="fill"
+        custom:avColor="@color/av_deep_orange"
+        custom:avSpeed="normal"
+        custom:avGravity="8"/>
+
 
     <Button
         android:id="@+id/button_main_audioTest"
@@ -16,20 +29,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button_bassboost"
+        android:id="@+id/button_resume"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="bass boost"
+        android:text="Resume"
         app:layout_constraintBottom_toTopOf="@+id/button_main_audioTest"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.503"
-        tools:layout_editor_absoluteX="141dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button_gain"
+        android:id="@+id/button_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="gain"
+        android:text="Pause"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -3,6 +3,7 @@ package com.example.fumolizer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -12,6 +13,13 @@ import android.media.audiofx.AudioEffect
 import java.lang.Object
 import android.media.MediaPlayer
 import android.media.audiofx.BassBoost
+import androidx.core.content.ContextCompat
+import com.gauravk.audiovisualizer.visualizer.BarVisualizer
+import com.gauravk.audiovisualizer.visualizer.BlastVisualizer
+import com.gauravk.audiovisualizer.visualizer.BlobVisualizer
+import com.gauravk.audiovisualizer.visualizer.WaveVisualizer
+import java.security.AccessController.getContext
+import java.util.jar.Manifest
 import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
@@ -20,27 +28,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val buttoner = findViewById(R.id.button_main_audioTest) as Button
-        val bassbooster = findViewById(R.id.button_bassboost) as Button
-        val gain = findViewById(R.id.button_gain) as Button
-        var mediaPlayer: MediaPlayer = MediaPlayer.create(this, R.raw.chasingtheenigma)
+        val resume = findViewById(R.id.button_resume) as Button
+        val visualizer = findViewById(R.id.visual) as BlobVisualizer
+        val pause = findViewById(R.id.button_pause) as Button
+
+        var mediaPlayer: MediaPlayer = MediaPlayer.create(this, R.raw.syncolefeelgood)
         var sessionida = mediaPlayer.getAudioSessionId()
 
         buttoner.setOnClickListener {
-            Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
 
+            if (sessionida != -1)
+                visualizer.setAudioSessionId(sessionida)
+            Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
+            mediaPlayer.start()
+
+
+        }
+        resume.setOnClickListener{
             mediaPlayer.start()
         }
-        bassbooster.setOnClickListener{
-            var bassboosteffect = BassBoost(1, sessionida)
-            Toast.makeText(this, "bassboost works.", Toast.LENGTH_SHORT).show()
-            bassboosteffect.setStrength(100)
-            bassboosteffect.setEnabled(true)
-        }
 
-        gain.setOnClickListener {
-            var equalizereffect = Equalizer(2, sessionida)
-            var band = equalizereffect.getBand (250000)
-            equalizereffect.setBandLevel(band, -10000)
+        pause.setOnClickListener {
+            mediaPlayer.pause()
         }
 
 
