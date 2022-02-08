@@ -30,11 +30,16 @@ class EqualizerActivity : AppCompatActivity() {
 
         start.setOnClickListener {
             Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
-            mediaPlayer.start()
+            //mediaPlayer.start()
+
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            startService(intent)
         }
 
         stop.setOnClickListener {
-            mediaPlayer.pause()
+            //mediaPlayer.pause()
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            stopService(intent)
         }
 
         change.setOnClickListener {

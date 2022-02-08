@@ -11,6 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".ContextClass"
         android:theme="@style/Theme.Fumolizer">
         <activity
             android:name=".MainActivity"
@@ -27,6 +28,7 @@
         <activity android:name=".VolumeActivity"></activity>
         <activity android:name=".CompressorActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
+        <service android:name=".BackgroundSoundService" android:enabled="true"></service>
         </application>
         <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"></uses-permission>
 
