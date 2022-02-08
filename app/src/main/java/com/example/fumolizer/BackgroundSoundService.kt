@@ -23,14 +23,20 @@ class BackgroundSoundService : Service() {
         super.onCreate()
         player = MediaPlayer.create(ContextClass.applicationContext(), R.raw.chasingtheenigma)
         player.isLooping = true
-        player.setVolume(100f, 100f)
+        //player.setVolume(100f, 100f)
 
     }
 
     @SuppressLint("WrongConstant")
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        player.start()
-        Toast.makeText(ContextClass.applicationContext(), "Playing song", Toast.LENGTH_SHORT).show()
+
+        if (intent.getStringExtra("action").toString() == "play"){
+            player.start()
+        }
+        if (intent.getStringExtra("action").toString() == "pause"){
+            player.pause()
+        }
+
         return 1
     }
 

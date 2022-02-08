@@ -29,17 +29,17 @@ class EqualizerActivity : AppCompatActivity() {
         var start = findViewById(R.id.button_equalizer_start) as Button
 
         start.setOnClickListener {
-            Toast.makeText(this, "It works.", Toast.LENGTH_SHORT).show()
-            //mediaPlayer.start()
 
             val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "play")
             startService(intent)
         }
 
         stop.setOnClickListener {
-            //mediaPlayer.pause()
+
             val intent = Intent(this, BackgroundSoundService::class.java)
-            stopService(intent)
+            intent.putExtra("action", "pause")
+            startService(intent)
         }
 
         change.setOnClickListener {
@@ -47,8 +47,13 @@ class EqualizerActivity : AppCompatActivity() {
             change1.setPreset(PresetReverb.PRESET_SMALLROOM)
             change1.setEnabled(true)
 
-            mediaPlayer.pause()
-            mediaPlayer.start()
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "pause")
+            startService(intent)
+            intent.removeExtra("action")
+            intent.putExtra("action", "play")
+            startService(intent)
+
 
             if(change1.hasControl()) {
                 Toast.makeText(this, "eqauled", Toast.LENGTH_SHORT).show()
