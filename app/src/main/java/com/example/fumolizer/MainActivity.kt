@@ -1,5 +1,6 @@
 package com.example.fumolizer
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
@@ -15,15 +16,32 @@ import android.media.MediaPlayer
 import android.media.audiofx.PresetReverb
 import android.media.audiofx.PresetReverb.PRESET_LARGEHALL
 import android.media.audiofx.PresetReverb.PRESET_SMALLROOM
+import android.view.MotionEvent
+import android.widget.ImageView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var pin = findViewById(R.id.imageView_main_power) as ImageView
+
+        pin.setOnTouchListener { view, motionEvent ->
+            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                pin.setImageResource(R.drawable.fumu_dark)
+            }
+            if (motionEvent.action == MotionEvent.ACTION_UP) {
+                pin.setImageResource(R.drawable.fumu)
+            }
+            true
+
+        }
+
         // Navigation Menu Code that allows you to change activity.
+
         findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.ic_fumolizer
         findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnNavigationItemSelectedListener {
             when (it.itemId){
