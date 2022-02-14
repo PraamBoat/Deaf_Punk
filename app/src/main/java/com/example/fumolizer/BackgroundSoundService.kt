@@ -18,6 +18,7 @@ class BackgroundSoundService : Service() {
 
     lateinit var player: MediaPlayer
     lateinit var achan: AudioManager
+    var killSwitch : Boolean = true
 
     override fun onBind(arg0: Intent): IBinder? {
 
@@ -26,6 +27,7 @@ class BackgroundSoundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        killSwitch = true
         player = MediaPlayer.create(ContextClass.applicationContext(), R.raw.chasingtheenigma)
         achan = ContextClass.applicationContext().getSystemService(AUDIO_SERVICE) as AudioManager
         player.isLooping = true
@@ -48,6 +50,18 @@ class BackgroundSoundService : Service() {
         }
         if (intent.getStringExtra("volume").toString() == "lower"){
             achan.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND)
+        }
+        if (intent.getStringExtra("killer").toString() == "activate"){
+            if (killSwitch){
+                // Stop all activity
+                killSwitch = false
+                player.pause()
+            }
+            else{
+                // Resume all activity
+                killSwitch = true
+                player.start()
+            }
         }
 
         return 1

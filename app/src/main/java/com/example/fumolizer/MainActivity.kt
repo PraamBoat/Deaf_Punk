@@ -29,12 +29,18 @@ class MainActivity : AppCompatActivity() {
 
         var pin = findViewById(R.id.imageView_main_power) as ImageView
 
+        // Listener that checks whether the image is held is released, doing different things depending on action.
+        // TO-DO: Make the clickable image a circle instead of covering the whole screen.
+
         pin.setOnTouchListener { view, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_DOWN) {
                 pin.setImageResource(R.drawable.fumu_dark)
             }
             if (motionEvent.action == MotionEvent.ACTION_UP) {
                 pin.setImageResource(R.drawable.fumu)
+                val intent = Intent(this, BackgroundSoundService::class.java)
+                intent.putExtra("killer", "activate")
+                startService(intent)
             }
             true
 
