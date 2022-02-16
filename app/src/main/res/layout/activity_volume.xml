@@ -17,26 +17,6 @@
             android:layout_height="match_parent">
 
 
-            <Button
-                android:id="@+id/button_volume_higher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="208dp"
-                android:text="Higher"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/button_volume_lower"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="108dp"
-                android:text="Lower"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button_volume_higher" />
-
             <android.widget.VerticalSeekBar
                 android:id="@+id/volumeBar"
                 android:layout_width="wrap_content"

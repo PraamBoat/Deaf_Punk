@@ -17,7 +17,6 @@ import androidx.core.content.getSystemService
 class BackgroundSoundService : Service() {
 
     lateinit var player: MediaPlayer
-    lateinit var achan: AudioManager
     var killSwitch : Boolean = true
 
     override fun onBind(arg0: Intent): IBinder? {
@@ -29,7 +28,6 @@ class BackgroundSoundService : Service() {
         super.onCreate()
         killSwitch = true
         player = MediaPlayer.create(ContextClass.applicationContext(), R.raw.chasingtheenigma)
-        achan = ContextClass.applicationContext().getSystemService(AUDIO_SERVICE) as AudioManager
         player.isLooping = true
 
 
@@ -38,19 +36,17 @@ class BackgroundSoundService : Service() {
     @SuppressLint("WrongConstant")
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
+        // Start and stop player functions. Used in EqualizerActivity.
+
         if (intent.getStringExtra("action").toString() == "play"){
             player.start()
         }
         if (intent.getStringExtra("action").toString() == "pause"){
             player.pause()
         }
-        if (intent.getStringExtra("volume").toString() == "higher"){
-            // Use AudioManager to get cur(rent volume
-            achan.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND)
-        }
-        if (intent.getStringExtra("volume").toString() == "lower"){
-            achan.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND)
-        }
+
+        // Kill switch for the player. Used in MainActivity
+
         if (intent.getStringExtra("killer").toString() == "activate"){
             if (killSwitch){
                 // Stop all activity
