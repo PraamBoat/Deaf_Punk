@@ -3,6 +3,9 @@ package com.example.fumolizer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
+import android.content.ComponentName
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.*
 import android.media.AudioManager
 import android.media.MediaMetadata
@@ -18,54 +21,45 @@ import android.media.MediaPlayer
 import android.media.session.MediaSessionManager
 import android.os.Handler
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 
-
 class SettingsActivity : AppCompatActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        // Changes theme of application
+        var button = findViewById<Button>(R.id.button_settings_darkMode)
 
+        val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+        val sharedPrefsEdit: SharedPreferences.Editor = appSettingPrefs.edit()
+        val isNightModeOn: Boolean = appSettingPrefs.getBoolean( "NightMode", false)
 
-        /*val broadCastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(contxt: Context?, intent: Intent?) {
-                val artist = intent?.getStringExtra("artist")
-                val album = intent?.getStringExtra("album")
-                val track = intent?.getStringExtra("track")
-                Log.v("tag", artist + ":" + album + ":" + track)
-                Toast.makeText(ContextClass.applicationContext(), track, Toast.LENGTH_SHORT).show()
-            }
+        if(isNightModeOn) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            button.text = "Disable Dark Mode"
+            Toast.makeText(this, "Enabled Dark Mode", Toast.LENGTH_SHORT).show()
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            button.text = "Enable Dark Mode"
+            Toast.makeText(this, "Disabled Dark Mode", Toast.LENGTH_SHORT).show()
         }
-
-        val iF = IntentFilter()
-        iF.addAction("com.android.music.metachanged")
-        iF.addAction("com.htc.music.metachanged")
-        iF.addAction("fm.last.android.metachanged")
-        iF.addAction("com.sec.android.app.music.metachanged")
-        iF.addAction("com.nullsoft.winamp.metachanged")
-        iF.addAction("com.amazon.mp3.metachanged")
-        iF.addAction("com.miui.player.metachanged")
-        iF.addAction("com.real.IMP.metachanged")
-        iF.addAction("com.sonyericsson.music.metachanged")
-        iF.addAction("com.rdio.android.metachanged")
-        iF.addAction("com.samsung.sec.android.MusicPlayer.metachanged")
-        iF.addAction("com.andrew.apollo.metachanged")
-        iF.addAction("in.krosbits.musicolet")
-
-        registerReceiver(broadCastReceiver, iF)*/
-
-        // TO-DO: Find a way to get the current song information here!
-
-        findViewById<Button>(R.id.button_settings_test).setOnClickListener {
-
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("grab", "meta")
-            startService(intent)
-
+        button.setOnClickListener {
+            if(isNightModeOn) {
+                button.text = "Enable Dark Mode"
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                sharedPrefsEdit.putBoolean("NightMode", false)
+                sharedPrefsEdit.apply()
+            }
+            else {
+                button.text = "Disable Dark Mode"
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                sharedPrefsEdit.putBoolean("NightMode", true)
+                sharedPrefsEdit.apply()
+            }
         }
 
 
