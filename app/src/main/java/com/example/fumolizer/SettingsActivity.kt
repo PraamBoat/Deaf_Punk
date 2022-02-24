@@ -41,9 +41,11 @@ class SettingsActivity : AppCompatActivity() {
         if(isNightModeOn) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             button.text = "Disable Dark Mode"
+            Toast.makeText(this, "Enabled Dark Mode", Toast.LENGTH_SHORT).show()
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             button.text = "Enable Dark Mode"
+            Toast.makeText(this, "Disabled Dark Mode", Toast.LENGTH_SHORT).show()
         }
         button.setOnClickListener {
             if(isNightModeOn) {
