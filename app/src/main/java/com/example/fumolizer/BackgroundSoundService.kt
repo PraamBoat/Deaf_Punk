@@ -2,8 +2,7 @@ package com.example.fumolizer
 
 import android.annotation.SuppressLint
 import android.app.Service
-import android.content.ContentUris
-import android.content.Intent
+import android.content.*
 import android.content.res.AssetFileDescriptor
 import android.media.MediaPlayer
 import android.os.IBinder
@@ -18,6 +17,9 @@ class BackgroundSoundService : Service() {
 
     lateinit var player: MediaPlayer
     var killSwitch : Boolean = true
+    lateinit var broadCastReceiver : BroadcastReceiver
+    var iF = IntentFilter()
+    lateinit var track : String
 
     override fun onBind(arg0: Intent): IBinder? {
 
@@ -29,6 +31,35 @@ class BackgroundSoundService : Service() {
         killSwitch = true
         player = MediaPlayer.create(ContextClass.applicationContext(), R.raw.chasingtheenigma)
         player.isLooping = true
+
+        iF.addAction("com.android.music.metachanged")
+        iF.addAction("com.htc.music.metachanged")
+        iF.addAction("fm.last.android.metachanged")
+        iF.addAction("com.sec.android.app.music.metachanged")
+        iF.addAction("com.nullsoft.winamp.metachanged")
+        iF.addAction("com.amazon.mp3.metachanged")
+        iF.addAction("com.miui.player.metachanged")
+        iF.addAction("com.real.IMP.metachanged")
+        iF.addAction("com.sonyericsson.music.metachanged")
+        iF.addAction("com.rdio.android.metachanged")
+        iF.addAction("com.samsung.sec.android.MusicPlayer.metachanged")
+        iF.addAction("com.andrew.apollo.metachanged")
+        iF.addAction("in.krosbits.musicolet")
+        iF.addAction("in.krosbits.musicolet.metachanged")
+
+        broadCastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(contxt: Context?, intent: Intent?) {
+                Log.v("settings", "Step 2 Called")
+                val artist = intent?.getStringExtra("artist")
+                val album = intent?.getStringExtra("album")
+                track = intent?.getStringExtra("track").toString()
+                Log.v("tag", artist + ":" + album + ":" + track)
+                //Toast.makeText(ContextClass.applicationContext(), track, Toast.LENGTH_SHORT).show()
+                Log.v("settings", "Step 3 Called")
+            }
+        }
+
+        registerReceiver(broadCastReceiver, iF)
 
 
     }
@@ -58,6 +89,16 @@ class BackgroundSoundService : Service() {
                 killSwitch = true
                 player.start()
             }
+        }
+
+        if (intent.getStringExtra("grab").toString() == "meta"){
+
+            Log.v("settings", "Step 1 Called")
+
+            //registerReceiver(broadCastReceiver, iF)
+
+            Toast.makeText(ContextClass.applicationContext(), track, Toast.LENGTH_SHORT).show()
+
         }
 
         return 1
