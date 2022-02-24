@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -18,6 +19,7 @@ import android.media.audiofx.PresetReverb.PRESET_LARGEHALL
 import android.media.audiofx.PresetReverb.PRESET_SMALLROOM
 import android.view.MotionEvent
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 
@@ -44,6 +46,15 @@ class MainActivity : AppCompatActivity() {
             }
             true
 
+        }
+
+        //Code that runs the saved preferences (dark theme so far) and perhaps other settings
+        val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+        val isNightModeOn: Boolean = appSettingPrefs.getBoolean("NightMode", false)
+        if(isNightModeOn) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
         // Navigation Menu Code that allows you to change activity.
