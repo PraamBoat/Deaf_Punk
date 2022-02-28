@@ -3,10 +3,7 @@ package com.example.fumolizer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Intent
-import android.content.SharedPreferences
-import android.content.*
+          import android.content.*
 import android.media.AudioManager
 import android.media.MediaMetadata
 import android.media.MediaMetadataRetriever
@@ -26,12 +23,16 @@ import androidx.core.content.getSystemService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 
+
 class SettingsActivity : AppCompatActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        // Changes theme of application
+
+        // TO-DO: Find a way to get the current song information here!
+
         var button = findViewById<Button>(R.id.button_settings_darkMode)
 
         val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
@@ -60,6 +61,12 @@ class SettingsActivity : AppCompatActivity() {
                 sharedPrefsEdit.putBoolean("NightMode", true)
                 sharedPrefsEdit.apply()
             }
+        }
+
+        findViewById<Button>(R.id.button_settings_title).setOnClickListener {
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("meta", "title")
+            startService(intent)
         }
 
 

@@ -46,16 +46,13 @@ class BackgroundSoundService : Service() {
         iF.addAction("com.andrew.apollo.metachanged")
         iF.addAction("in.krosbits.musicolet")
         iF.addAction("in.krosbits.musicolet.metachanged")
+        track = "Error: Please change song"
 
         broadCastReceiver = object : BroadcastReceiver() {
             override fun onReceive(contxt: Context?, intent: Intent?) {
-                Log.v("settings", "Step 2 Called")
-                val artist = intent?.getStringExtra("artist")
-                val album = intent?.getStringExtra("album")
+
                 track = intent?.getStringExtra("track").toString()
-                Log.v("tag", artist + ":" + album + ":" + track)
-                //Toast.makeText(ContextClass.applicationContext(), track, Toast.LENGTH_SHORT).show()
-                Log.v("settings", "Step 3 Called")
+
             }
         }
 
@@ -91,11 +88,7 @@ class BackgroundSoundService : Service() {
             }
         }
 
-        if (intent.getStringExtra("grab").toString() == "meta"){
-
-            Log.v("settings", "Step 1 Called")
-
-            //registerReceiver(broadCastReceiver, iF)
+        if (intent.getStringExtra("meta").toString() == "title"){
 
             Toast.makeText(ContextClass.applicationContext(), track, Toast.LENGTH_SHORT).show()
 
