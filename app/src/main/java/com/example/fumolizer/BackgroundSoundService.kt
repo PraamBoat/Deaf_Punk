@@ -9,17 +9,23 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.widget.Toast
 import android.media.AudioManager
+import android.media.audiofx.AudioEffect
+import android.media.audiofx.Equalizer
 import android.util.Log
 import androidx.core.content.getSystemService
-
 
 class BackgroundSoundService : Service() {
 
     lateinit var player: MediaPlayer
     var killSwitch : Boolean = true
     lateinit var broadCastReceiver : BroadcastReceiver
+    lateinit var mAudioSessionReceiver : BroadcastReceiver
     var iF = IntentFilter()
+    var kson = IntentFilter()
     lateinit var track : String
+    lateinit var achan : AudioManager
+    var audioId : Int = 0
+    lateinit var selfRizer : Equalizer
 
     override fun onBind(arg0: Intent): IBinder? {
 
@@ -31,6 +37,14 @@ class BackgroundSoundService : Service() {
         killSwitch = true
         player = MediaPlayer.create(ContextClass.applicationContext(), R.raw.chasingtheenigma)
         player.isLooping = true
+
+        selfRizer = Equalizer(0, 1)
+        selfRizer.enabled = false
+
+        achan = ContextClass.applicationContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        kson.apply { addAction(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION) }
+        kson.apply { addAction(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION) }
 
         iF.addAction("com.android.music.metachanged")
         iF.addAction("com.htc.music.metachanged")
@@ -52,6 +66,54 @@ class BackgroundSoundService : Service() {
             override fun onReceive(contxt: Context?, intent: Intent?) {
 
                 track = intent?.getStringExtra("track").toString()
+                audioId = achan.generateAudioSessionId()
+
+                val sessionStates = arrayOf(
+                    AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION,
+                    AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION
+                )
+
+                //TASK: Find a way to recognize it when song is changed! Maybe remove the if statements!
+
+                Log.v("service", "Pre Step Called")
+                if (intent?.action == AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION ||
+                        intent?.action == AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION){
+                    Log.v("Service", "Step 1a Called")
+                }
+                if (sessionStates.contains(intent?.action)) {
+
+                    Log.v("Service", "Step 1b Called")
+
+                    val sessionID = intent!!.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, AudioEffect.ERROR)
+
+                    when (intent?.action) {
+                        AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION -> {
+                            selfRizer = Equalizer(0, sessionID)
+
+
+                            var numberOfBands = selfRizer.numberOfBands
+                            var lowestBandLevel = selfRizer.bandLevelRange[0]
+                            var highestBandLevel = selfRizer.bandLevelRange[1]
+                            var bandLevel = (100.plus(lowestBandLevel!!)).toShort()
+
+                            var bands = ArrayList<Integer>(0)
+                            (0 until numberOfBands!!)
+                                .map { selfRizer.getCenterFreq(it.toShort()) }
+                                .mapTo(bands) { Integer(it?.div(1000)!!) }
+                            Toast.makeText(ContextClass.applicationContext(), numberOfBands.toString() + " " + lowestBandLevel.toString() +
+                                    " " + highestBandLevel.toString() + " " + bandLevel.toString(), Toast.LENGTH_LONG).show()
+                            selfRizer.setBandLevel(1.toShort(), bandLevel)
+                            selfRizer.setBandLevel(2.toShort(), bandLevel)
+                            selfRizer.setBandLevel(3.toShort(), 500.toShort())
+                            selfRizer.setBandLevel(4.toShort(), bandLevel)
+
+                            selfRizer.enabled = true
+                        }
+                        AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION -> {
+                            selfRizer.enabled = false
+                        }
+                    }
+                }
 
             }
         }
