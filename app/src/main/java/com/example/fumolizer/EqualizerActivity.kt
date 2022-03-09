@@ -66,7 +66,12 @@ class EqualizerActivity : AppCompatActivity() {
 
         equal.setOnClickListener{
 
-            var numberOfBands = equal1.numberOfBands
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "equalize")
+            startService(intent)
+
+
+            /*var numberOfBands = equal1.numberOfBands
             var lowestBandLevel = equal1.bandLevelRange[0]
             var highestBandLevel = equal1.bandLevelRange[1]
             var bandLevel = (100.plus(lowestBandLevel!!)).toShort()
@@ -82,7 +87,7 @@ class EqualizerActivity : AppCompatActivity() {
             equal1.setBandLevel(3.toShort(), 500.toShort())
             equal1.setBandLevel(4.toShort(), bandLevel)
 
-            equal1.enabled = true
+            equal1.enabled = true*/
         }
 
         cancel.setOnClickListener{

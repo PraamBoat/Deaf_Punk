@@ -11,7 +11,9 @@ import android.widget.Toast
 import android.media.AudioManager
 import android.media.audiofx.AudioEffect
 import android.media.audiofx.Equalizer
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 
 class BackgroundSoundService : Service() {
@@ -19,13 +21,13 @@ class BackgroundSoundService : Service() {
     lateinit var player: MediaPlayer
     var killSwitch : Boolean = true
     lateinit var broadCastReceiver : BroadcastReceiver
-    lateinit var mAudioSessionReceiver : BroadcastReceiver
+    lateinit var kaichouReceiver : AudioSessionReceiver
     var iF = IntentFilter()
     var kson = IntentFilter()
     lateinit var track : String
     lateinit var achan : AudioManager
-    var audioId : Int = 0
-    lateinit var selfRizer : Equalizer
+    var id : Int = 0
+    lateinit var packName : String
 
     override fun onBind(arg0: Intent): IBinder? {
 
@@ -38,8 +40,7 @@ class BackgroundSoundService : Service() {
         player = MediaPlayer.create(ContextClass.applicationContext(), R.raw.chasingtheenigma)
         player.isLooping = true
 
-        selfRizer = Equalizer(0, 1)
-        selfRizer.enabled = false
+
 
         achan = ContextClass.applicationContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -60,64 +61,48 @@ class BackgroundSoundService : Service() {
         iF.addAction("com.andrew.apollo.metachanged")
         iF.addAction("in.krosbits.musicolet")
         iF.addAction("in.krosbits.musicolet.metachanged")
+        iF.addAction("AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION")
+        iF.addAction("AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION")
         track = "Error: Please change song"
 
+        kaichouReceiver = object : AudioSessionReceiver() {
+            override fun onReceive(Context: Context?, intent: Intent?) {
+                id = intent?.getIntExtra(Equalizer.EXTRA_AUDIO_SESSION, -1) as Int
+                packName = intent?.getStringExtra(Equalizer.EXTRA_PACKAGE_NAME).toString()
+                Log.v("service", "Following AudioSessionReceiver")
+                Log.v("service", "$packName:$id")
+            }
+        }
+
         broadCastReceiver = object : BroadcastReceiver() {
+            @RequiresApi(Build.VERSION_CODES.Q)
             override fun onReceive(contxt: Context?, intent: Intent?) {
 
                 track = intent?.getStringExtra("track").toString()
-                audioId = achan.generateAudioSessionId()
-
-                val sessionStates = arrayOf(
-                    AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION,
-                    AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION
-                )
 
                 //TASK: Find a way to recognize it when song is changed! Maybe remove the if statements!
 
                 Log.v("service", "Pre Step Called")
-                if (intent?.action == AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION ||
-                        intent?.action == AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION){
-                    Log.v("Service", "Step 1a Called")
-                }
+
+                Log.v("service", intent?.action.toString())
+
+
+                /*val sessionStates = arrayOf(
+                    AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION,
+                    AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION
+                )
+
                 if (sessionStates.contains(intent?.action)) {
-
-                    Log.v("Service", "Step 1b Called")
-
-                    val sessionID = intent!!.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, AudioEffect.ERROR)
-
-                    when (intent?.action) {
-                        AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION -> {
-                            selfRizer = Equalizer(0, sessionID)
-
-
-                            var numberOfBands = selfRizer.numberOfBands
-                            var lowestBandLevel = selfRizer.bandLevelRange[0]
-                            var highestBandLevel = selfRizer.bandLevelRange[1]
-                            var bandLevel = (100.plus(lowestBandLevel!!)).toShort()
-
-                            var bands = ArrayList<Integer>(0)
-                            (0 until numberOfBands!!)
-                                .map { selfRizer.getCenterFreq(it.toShort()) }
-                                .mapTo(bands) { Integer(it?.div(1000)!!) }
-                            Toast.makeText(ContextClass.applicationContext(), numberOfBands.toString() + " " + lowestBandLevel.toString() +
-                                    " " + highestBandLevel.toString() + " " + bandLevel.toString(), Toast.LENGTH_LONG).show()
-                            selfRizer.setBandLevel(1.toShort(), bandLevel)
-                            selfRizer.setBandLevel(2.toShort(), bandLevel)
-                            selfRizer.setBandLevel(3.toShort(), 500.toShort())
-                            selfRizer.setBandLevel(4.toShort(), bandLevel)
-
-                            selfRizer.enabled = true
-                        }
-                        AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION -> {
-                            selfRizer.enabled = false
-                        }
-                    }
-                }
-
+                    val service = Intent(contxt, BackgroundSoundService::class.java)
+                    val sessionID = intent?.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, AudioEffect.ERROR)
+                    service
+                        .apply { action = intent?.action }
+                        .apply { putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionID) }
+                    contxt?.startService(service)
+                }*/
             }
         }
-
+        registerReceiver(kaichouReceiver, iF)
         registerReceiver(broadCastReceiver, iF)
 
 
@@ -154,6 +139,31 @@ class BackgroundSoundService : Service() {
 
             Toast.makeText(ContextClass.applicationContext(), track, Toast.LENGTH_SHORT).show()
 
+        }
+
+        if (intent.getStringExtra("action").toString() == "equalize"){
+
+            val sessionId = achan.generateAudioSessionId()
+            var jikkoRizer = Equalizer(0, sessionId)
+            Log.v("service", "Equalize Step Called")
+            var numberOfBands = jikkoRizer.numberOfBands
+            var lowestBandLevel = jikkoRizer.bandLevelRange[0]
+            var highestBandLevel = jikkoRizer.bandLevelRange[1]
+            var bandLevel = (100.plus(lowestBandLevel!!)).toShort()
+
+            var bands = ArrayList<Integer>(0)
+            (0 until numberOfBands!!)
+                .map { jikkoRizer.getCenterFreq(it.toShort()) }
+                .mapTo(bands) { Integer(it?.div(1000)!!) }
+            Toast.makeText(this, numberOfBands.toString() + " " + lowestBandLevel.toString() + " "
+                    + highestBandLevel.toString() + " " + bandLevel.toString(),Toast.LENGTH_LONG).show()
+            jikkoRizer.setBandLevel(1.toShort(), bandLevel)
+            jikkoRizer.setBandLevel(2.toShort(), bandLevel)
+            jikkoRizer.setBandLevel(3.toShort(), 500.toShort())
+            jikkoRizer.setBandLevel(4.toShort(), bandLevel)
+
+            jikkoRizer.enabled = true
+            Log.v("service", "Equalize Complete")
         }
 
         return 1
