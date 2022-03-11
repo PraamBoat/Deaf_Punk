@@ -15,19 +15,17 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
+import android.media.MediaMetadata
 
 class BackgroundSoundService : Service() {
 
     lateinit var player: MediaPlayer
     var killSwitch : Boolean = true
     lateinit var broadCastReceiver : BroadcastReceiver
-    lateinit var kaichouReceiver : AudioSessionReceiver
     var iF = IntentFilter()
-    var kson = IntentFilter()
     lateinit var track : String
     lateinit var achan : AudioManager
-    var id : Int = 0
-    lateinit var packName : String
+    lateinit var equalizeService : Equalizer
 
     override fun onBind(arg0: Intent): IBinder? {
 
@@ -40,12 +38,7 @@ class BackgroundSoundService : Service() {
         player = MediaPlayer.create(ContextClass.applicationContext(), R.raw.chasingtheenigma)
         player.isLooping = true
 
-
-
         achan = ContextClass.applicationContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-        kson.apply { addAction(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION) }
-        kson.apply { addAction(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION) }
 
         iF.addAction("com.android.music.metachanged")
         iF.addAction("com.htc.music.metachanged")
@@ -65,44 +58,15 @@ class BackgroundSoundService : Service() {
         iF.addAction("AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION")
         track = "Error: Please change song"
 
-        kaichouReceiver = object : AudioSessionReceiver() {
-            override fun onReceive(Context: Context?, intent: Intent?) {
-                id = intent?.getIntExtra(Equalizer.EXTRA_AUDIO_SESSION, -1) as Int
-                packName = intent?.getStringExtra(Equalizer.EXTRA_PACKAGE_NAME).toString()
-                Log.v("service", "Following AudioSessionReceiver")
-                Log.v("service", "$packName:$id")
-            }
-        }
-
         broadCastReceiver = object : BroadcastReceiver() {
             @RequiresApi(Build.VERSION_CODES.Q)
             override fun onReceive(contxt: Context?, intent: Intent?) {
 
                 track = intent?.getStringExtra("track").toString()
 
-                //TASK: Find a way to recognize it when song is changed! Maybe remove the if statements!
-
-                Log.v("service", "Pre Step Called")
-
-                Log.v("service", intent?.action.toString())
-
-
-                /*val sessionStates = arrayOf(
-                    AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION,
-                    AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION
-                )
-
-                if (sessionStates.contains(intent?.action)) {
-                    val service = Intent(contxt, BackgroundSoundService::class.java)
-                    val sessionID = intent?.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, AudioEffect.ERROR)
-                    service
-                        .apply { action = intent?.action }
-                        .apply { putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionID) }
-                    contxt?.startService(service)
-                }*/
             }
         }
-        registerReceiver(kaichouReceiver, iF)
+
         registerReceiver(broadCastReceiver, iF)
 
 
@@ -143,27 +107,34 @@ class BackgroundSoundService : Service() {
 
         if (intent.getStringExtra("action").toString() == "equalize"){
 
-            val sessionId = achan.generateAudioSessionId()
-            var jikkoRizer = Equalizer(0, sessionId)
+            equalizeService = Equalizer(0, 0)
+
             Log.v("service", "Equalize Step Called")
-            var numberOfBands = jikkoRizer.numberOfBands
-            var lowestBandLevel = jikkoRizer.bandLevelRange[0]
-            var highestBandLevel = jikkoRizer.bandLevelRange[1]
+
+            var numberOfBands = equalizeService.numberOfBands
+            var lowestBandLevel = equalizeService.bandLevelRange[0]
+            var highestBandLevel = equalizeService.bandLevelRange[1]
             var bandLevel = (100.plus(lowestBandLevel!!)).toShort()
+
+            Log.v("equalizing", numberOfBands.toString() + " " + lowestBandLevel.toString() + " "
+                    + highestBandLevel.toString() + " " + bandLevel.toString())
 
             var bands = ArrayList<Integer>(0)
             (0 until numberOfBands!!)
-                .map { jikkoRizer.getCenterFreq(it.toShort()) }
+                .map { equalizeService.getCenterFreq(it.toShort()) }
                 .mapTo(bands) { Integer(it?.div(1000)!!) }
-            Toast.makeText(this, numberOfBands.toString() + " " + lowestBandLevel.toString() + " "
-                    + highestBandLevel.toString() + " " + bandLevel.toString(),Toast.LENGTH_LONG).show()
-            jikkoRizer.setBandLevel(1.toShort(), bandLevel)
-            jikkoRizer.setBandLevel(2.toShort(), bandLevel)
-            jikkoRizer.setBandLevel(3.toShort(), 500.toShort())
-            jikkoRizer.setBandLevel(4.toShort(), bandLevel)
 
-            jikkoRizer.enabled = true
+            equalizeService.setBandLevel(1.toShort(), bandLevel)
+            equalizeService.setBandLevel(2.toShort(), bandLevel)
+            equalizeService.setBandLevel(3.toShort(), 500.toShort())
+            equalizeService.setBandLevel(4.toShort(), bandLevel)
+
+            equalizeService.enabled = true
             Log.v("service", "Equalize Complete")
+        }
+
+        if (intent.getStringExtra("action").toString() == "cancel"){
+            equalizeService.enabled = false
         }
 
         return 1

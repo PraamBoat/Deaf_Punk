@@ -70,28 +70,12 @@ class EqualizerActivity : AppCompatActivity() {
             intent.putExtra("action", "equalize")
             startService(intent)
 
-
-            /*var numberOfBands = equal1.numberOfBands
-            var lowestBandLevel = equal1.bandLevelRange[0]
-            var highestBandLevel = equal1.bandLevelRange[1]
-            var bandLevel = (100.plus(lowestBandLevel!!)).toShort()
-
-            var bands = ArrayList<Integer>(0)
-            (0 until numberOfBands!!)
-                .map { equal1.getCenterFreq(it.toShort()) }
-                .mapTo(bands) { Integer(it?.div(1000)!!) }
-            Toast.makeText(this, numberOfBands.toString() + " " + lowestBandLevel.toString() + " "
-                    + highestBandLevel.toString() + " " + bandLevel.toString(),Toast.LENGTH_LONG).show()
-            equal1.setBandLevel(1.toShort(), bandLevel)
-            equal1.setBandLevel(2.toShort(), bandLevel)
-            equal1.setBandLevel(3.toShort(), 500.toShort())
-            equal1.setBandLevel(4.toShort(), bandLevel)
-
-            equal1.enabled = true*/
         }
 
         cancel.setOnClickListener{
-            equal1.enabled = false
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "cancel")
+            startService(intent)
         }
 
         // Navigation Menu Code that allows you to change activity.

@@ -29,12 +29,6 @@
         <activity android:name=".CompressorActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
         <service android:name=".BackgroundSoundService" android:enabled="true"></service>
-        <receiver android:name=".AudioSessionReceiver" android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.media.action.OPEN_AUDIO_EFFECT_CONTROL_SESSION"></action>
-            </intent-filter>
-        </receiver>
         </application>
         <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"></uses-permission>
 
