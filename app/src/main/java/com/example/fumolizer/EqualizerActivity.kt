@@ -26,11 +26,9 @@ class EqualizerActivity : AppCompatActivity() {
         var sessionId = mediaPlayer.getAudioSessionId()
         var equal = findViewById(R.id.button_equalizer_equal) as Button
         var cancel = findViewById(R.id.button_equalizer_cancel) as Button
-        var equal1 = Equalizer(0, sessionId)
         var start = findViewById(R.id.button_equalizer_start) as Button
 
         start.setOnClickListener {
-
             val intent = Intent(this, BackgroundSoundService::class.java)
             intent.putExtra("action", "play")
             startService(intent)

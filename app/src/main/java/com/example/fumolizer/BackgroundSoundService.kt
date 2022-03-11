@@ -3,23 +3,18 @@ package com.example.fumolizer
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.*
-import android.content.res.AssetFileDescriptor
-import android.media.MediaPlayer
-import android.os.IBinder
-import android.provider.MediaStore
-import android.widget.Toast
 import android.media.AudioManager
-import android.media.audiofx.AudioEffect
+import android.media.MediaPlayer
 import android.media.audiofx.Equalizer
 import android.os.Build
+import android.os.IBinder
 import android.util.Log
+import android.view.KeyEvent
+import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.getSystemService
-import android.media.MediaMetadata
 
 class BackgroundSoundService : Service() {
 
-    lateinit var player: MediaPlayer
     var killSwitch : Boolean = true
     lateinit var broadCastReceiver : BroadcastReceiver
     var iF = IntentFilter()
@@ -35,8 +30,6 @@ class BackgroundSoundService : Service() {
     override fun onCreate() {
         super.onCreate()
         killSwitch = true
-        player = MediaPlayer.create(ContextClass.applicationContext(), R.raw.chasingtheenigma)
-        player.isLooping = true
 
         achan = ContextClass.applicationContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -78,10 +71,14 @@ class BackgroundSoundService : Service() {
         // Start and stop player functions. Used in EqualizerActivity.
 
         if (intent.getStringExtra("action").toString() == "play"){
-            player.start()
+
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
+            achan.dispatchMediaKeyEvent(event)
         }
         if (intent.getStringExtra("action").toString() == "pause"){
-            player.pause()
+
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
+            achan.dispatchMediaKeyEvent(event)
         }
 
         // Kill switch for the player. Used in MainActivity
@@ -90,12 +87,14 @@ class BackgroundSoundService : Service() {
             if (killSwitch){
                 // Stop all activity
                 killSwitch = false
-                player.pause()
+                val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
+                achan.dispatchMediaKeyEvent(event)
             }
             else{
                 // Resume all activity
                 killSwitch = true
-                player.start()
+                val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
+                achan.dispatchMediaKeyEvent(event)
             }
         }
 
@@ -150,8 +149,8 @@ class BackgroundSoundService : Service() {
     }
 
     fun onStop() {
-        player.stop()
-        player.release()
+        val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP)
+        achan.dispatchMediaKeyEvent(event)
     }
 
     fun onPause() {
@@ -159,8 +158,8 @@ class BackgroundSoundService : Service() {
     }
 
     override fun onDestroy() {
-        player.stop()
-        player.release()
+        val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP)
+        achan.dispatchMediaKeyEvent(event)
     }
 
     override fun onLowMemory() {
