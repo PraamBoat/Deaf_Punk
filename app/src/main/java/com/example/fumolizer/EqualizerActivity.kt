@@ -7,7 +7,9 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.media.audiofx.Equalizer
 import android.media.audiofx.PresetReverb
+import android.view.MenuInflater
 import android.widget.Button
+import android.widget.PopupMenu
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
@@ -19,11 +21,8 @@ class EqualizerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_equalizer)
 
-        var mediaPlayer = MediaPlayer.create(this, R.raw.chasingtheenigma)
-
         var stop = findViewById(R.id.button_equalizer_stop) as Button
-        var change = findViewById(R.id.button_equalizer_change) as Button
-        var sessionId = mediaPlayer.getAudioSessionId()
+        var presets = findViewById(R.id.button_equalizer_preset) as Button
         var equal = findViewById(R.id.button_equalizer_equal) as Button
         var cancel = findViewById(R.id.button_equalizer_cancel) as Button
         var start = findViewById(R.id.button_equalizer_start) as Button
@@ -41,33 +40,18 @@ class EqualizerActivity : AppCompatActivity() {
             startService(intent)
         }
 
-        change.setOnClickListener {
-            var change1 = PresetReverb(1, sessionId)
-            change1.setPreset(PresetReverb.PRESET_SMALLROOM)
-            change1.setEnabled(true)
+        presets.setOnClickListener {
 
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("action", "pause")
-            startService(intent)
-            intent.removeExtra("action")
-            intent.putExtra("action", "play")
-            startService(intent)
-
-
-            if(change1.hasControl()) {
-                Toast.makeText(this, "eqauled", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                Toast.makeText(this, "bad", Toast.LENGTH_SHORT).show()
-            }
+            val popup = PopupMenu(this, it)
+            val inflater: MenuInflater = popup.menuInflater
+            inflater.inflate(R.menu.actions, popup.menu)
+            popup.show()
         }
 
         equal.setOnClickListener{
-
             val intent = Intent(this, BackgroundSoundService::class.java)
             intent.putExtra("action", "equalize")
             startService(intent)
-
         }
 
         cancel.setOnClickListener{
