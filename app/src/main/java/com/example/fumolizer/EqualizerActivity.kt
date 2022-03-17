@@ -8,6 +8,7 @@ import android.media.MediaPlayer
 import android.media.audiofx.Equalizer
 import android.media.audiofx.PresetReverb
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -46,24 +47,48 @@ class EqualizerActivity : AppCompatActivity() {
             val inflater: MenuInflater = popup.menuInflater
             inflater.inflate(R.menu.actions, popup.menu)
             popup.show()
+            popup.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.Preset1 -> {
+                        val intent = Intent(this, BackgroundSoundService::class.java)
+                        intent.putExtra("action", "preset1")
+                        startService(intent)
+                        true
+                    }
+                    R.id.Preset2 -> {
+                        val intent = Intent(this, BackgroundSoundService::class.java)
+                        intent.putExtra("action", "preset2")
+                        startService(intent)
+                        true
+                    }
+                    R.id.Preset3 -> {
+                        val intent = Intent(this, BackgroundSoundService::class.java)
+                        intent.putExtra("action", "preset3")
+                        startService(intent)
+                        true
+                    }
+                    else -> throw AssertionError()
+                }
+            }
         }
 
-        equal.setOnClickListener{
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("action", "equalize")
-            startService(intent)
-        }
+            equal.setOnClickListener {
+                val intent = Intent(this, BackgroundSoundService::class.java)
+                intent.putExtra("action", "equalize")
+                startService(intent)
+            }
 
-        cancel.setOnClickListener{
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("action", "cancel")
-            startService(intent)
-        }
+            cancel.setOnClickListener {
+                val intent = Intent(this, BackgroundSoundService::class.java)
+                intent.putExtra("action", "cancel")
+                startService(intent)
+            }
+
 
         // Navigation Menu Code that allows you to change activity.
         findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.ic_equalizer
         findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnNavigationItemSelectedListener {
-            when (it.itemId){
+            when (it.itemId) {
                 R.id.ic_volume -> {
                     val intent = Intent(this, VolumeActivity::class.java)
                     startActivity(intent)
@@ -94,9 +119,5 @@ class EqualizerActivity : AppCompatActivity() {
                 else -> throw AssertionError()
             }
         }
-
     }
-
-
-
 }
