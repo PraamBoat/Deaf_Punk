@@ -1,7 +1,6 @@
 package com.example.fumolizer
 
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button

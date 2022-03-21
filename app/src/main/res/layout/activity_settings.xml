@@ -16,6 +16,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <Button
+                android:id="@+id/button_settings_barTitle"
+                android:layout_width="220dp"
+                android:layout_height="50dp"
+                android:backgroundTint="@color/purple_500"
+                android:enabled="false"
+                android:text="Button"
+                android:autoSizeTextType="uniform"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_settings_back"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <Button
                 android:id="@+id/button_settings_darkMode"
