@@ -10,18 +10,34 @@
         android:id="@+id/fl_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_navigation" />
+        android:layout_above="@id/bottom_navigation" >
+
+    </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <Button
+            android:id="@+id/button_equalizer_title"
+            android:layout_width="220dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="56dp"
+            android:backgroundTint="@color/purple_500"
+            android:enabled="false"
+            android:text="Button"
+            android:autoSizeTextType="uniform"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton_equalizer_back"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
             android:id="@+id/button_equalizer_stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Stop"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintBottom_toTopOf="@+id/button_equalizer_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button_equalizer_start" />
@@ -61,6 +77,44 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButton_equalizer_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="56dp"
+            android:backgroundTint="@color/purple_500"
+            android:minHeight="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_baseline_play_arrow_24"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <ImageButton
+            android:id="@+id/imageButton_equalizer_play"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="56dp"
+            android:backgroundTint="@color/purple_500"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton_equalizer_next"
+            app:srcCompat="@drawable/ic_baseline_play_circle_24"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <ImageButton
+            android:id="@+id/imageButton_equalizer_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="56dp"
+            android:backgroundTint="@color/purple_500"
+            android:scaleX="-1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton_equalizer_play"
+            app:srcCompat="@drawable/ic_baseline_play_arrow_24"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"

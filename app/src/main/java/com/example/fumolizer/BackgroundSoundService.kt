@@ -4,14 +4,16 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.*
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.media.audiofx.Equalizer
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.view.KeyEvent
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+
 
 class BackgroundSoundService : Service() {
 
@@ -26,6 +28,7 @@ class BackgroundSoundService : Service() {
 
         return null
     }
+
 
     override fun onCreate() {
         super.onCreate()
@@ -101,7 +104,6 @@ class BackgroundSoundService : Service() {
         if (intent.getStringExtra("meta").toString() == "title"){
 
             Toast.makeText(ContextClass.applicationContext(), track, Toast.LENGTH_SHORT).show()
-
         }
 
         if (intent.getStringExtra("action").toString() == "equalize"){
@@ -134,6 +136,31 @@ class BackgroundSoundService : Service() {
 
         if (intent.getStringExtra("action").toString() == "cancel"){
             equalizeService.enabled = false
+        }
+
+        if (intent.getStringExtra("action").toString() == "forward"){
+
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
+            achan.dispatchMediaKeyEvent(event)
+
+        }
+
+        if (intent.getStringExtra("action").toString() == "backwards"){
+
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+            achan.dispatchMediaKeyEvent(event)
+
+        }
+
+        if (intent.getStringExtra("action").toString() == "playing"){
+            if (achan.isMusicActive){
+                val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
+                achan.dispatchMediaKeyEvent(event)
+            }
+            else {
+                val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
+                achan.dispatchMediaKeyEvent(event)
+            }
         }
 
         return 1
