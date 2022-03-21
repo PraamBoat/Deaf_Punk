@@ -4,10 +4,13 @@ package com.example.fumolizer
 import android.content.*
 import android.media.MediaPlayer
 import android.media.audiofx.PresetReverb
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Button
+import android.widget.PopupMenu
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -27,12 +30,8 @@ class EqualizerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_equalizer)
 
-
-        var mediaPlayer = MediaPlayer.create(this, R.raw.chasingtheenigma)
-
         var stop = findViewById(R.id.button_equalizer_stop) as Button
-        var change = findViewById(R.id.button_equalizer_change) as Button
-        var sessionId = mediaPlayer.getAudioSessionId()
+        var presets = findViewById(R.id.button_equalizer_preset) as Button
         var equal = findViewById(R.id.button_equalizer_equal) as Button
         var cancel = findViewById(R.id.button_equalizer_cancel) as Button
         var start = findViewById(R.id.button_equalizer_start) as Button
@@ -90,24 +89,34 @@ class EqualizerActivity : AppCompatActivity() {
             startService(intent)
         }
 
-        change.setOnClickListener {
-            var change1 = PresetReverb(1, sessionId)
-            change1.setPreset(PresetReverb.PRESET_SMALLROOM)
-            change1.setEnabled(true)
+        presets.setOnClickListener {
 
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("action", "pause")
-            startService(intent)
-            intent.removeExtra("action")
-            intent.putExtra("action", "play")
-            startService(intent)
-
-
-            if(change1.hasControl()) {
-                Toast.makeText(this, "eqauled", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                Toast.makeText(this, "bad", Toast.LENGTH_SHORT).show()
+            val popup = PopupMenu(this, it)
+            val inflater: MenuInflater = popup.menuInflater
+            inflater.inflate(R.menu.actions, popup.menu)
+            popup.show()
+            popup.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.Preset1 -> {
+                        val intent = Intent(this, BackgroundSoundService::class.java)
+                        intent.putExtra("action", "preset1")
+                        startService(intent)
+                        true
+                    }
+                    R.id.Preset2 -> {
+                        val intent = Intent(this, BackgroundSoundService::class.java)
+                        intent.putExtra("action", "preset2")
+                        startService(intent)
+                        true
+                    }
+                    R.id.Preset3 -> {
+                        val intent = Intent(this, BackgroundSoundService::class.java)
+                        intent.putExtra("action", "preset3")
+                        startService(intent)
+                        true
+                    }
+                    else -> throw AssertionError()
+                }
             }
         }
 

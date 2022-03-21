@@ -83,6 +83,15 @@ class BackgroundSoundService : Service() {
             val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
             achan.dispatchMediaKeyEvent(event)
         }
+        if(intent.getStringExtra("action").toString() == "preset1") {
+            changeEqualizer(0.toShort(), 50.toShort(), 300.toShort(), 0.toShort())
+        }
+        if(intent.getStringExtra("action").toString() == "preset2") {
+            changeEqualizer(200.toShort(), 200.toShort(), 200.toShort(), 200.toShort())
+        }
+        if(intent.getStringExtra("action").toString() == "preset3") {
+            changeEqualizer(1000.toShort(), 1000.toShort(), 1000.toShort(), 1000.toShort())
+        }
 
         // Kill switch for the player. Used in MainActivity
 
@@ -164,6 +173,17 @@ class BackgroundSoundService : Service() {
         }
 
         return 1
+    }
+
+    fun changeEqualizer (band1: Short, band2: Short, band3: Short, band4: Short ) {
+        equalizeService.setBandLevel(1.toShort(), band1)
+        equalizeService.setBandLevel(2.toShort(), band2)
+        equalizeService.setBandLevel(3.toShort(), band3)
+        equalizeService.setBandLevel(4.toShort(), band4)
+
+        equalizeService.enabled = true
+        Log.v("service", "Equalizer changed successful")
+
     }
 
     override fun onStart(intent: Intent, startId: Int) {
