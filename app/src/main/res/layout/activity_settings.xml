@@ -16,19 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/button_settings_barTitle"
-                android:layout_width="220dp"
-                android:layout_height="50dp"
-                android:backgroundTint="@color/purple_500"
-                android:enabled="false"
-                android:text="Button"
-                android:autoSizeTextType="uniform"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_settings_back"
-                app:layout_constraintStart_toStartOf="parent" />
-
 
             <Button
                 android:id="@+id/button_settings_darkMode"
@@ -83,6 +70,36 @@
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_settings_play"
                 app:srcCompat="@drawable/ic_baseline_play_arrow_24"
                 tools:ignore="SpeakableTextPresentCheck" />
+
+
+            <SeekBar
+                android:id="@+id/seekBar_settings_color"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="56dp"
+                app:layout_constraintBottom_toTopOf="@+id/seekBar_settings_colorG"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <SeekBar
+                android:id="@+id/seekBar_settings_colorG"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp"
+                app:layout_constraintBottom_toTopOf="@+id/seekBar_settings_colorB"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <SeekBar
+                android:id="@+id/seekBar_settings_colorB"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_marginBottom="56dp"
+                app:layout_constraintBottom_toTopOf="@+id/button_settings_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
