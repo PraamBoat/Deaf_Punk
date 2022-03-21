@@ -1,27 +1,16 @@
 package com.example.fumolizer
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
-import android.app.Activity
-          import android.content.*
-import android.media.AudioManager
-import android.media.MediaMetadata
-import android.media.MediaMetadataRetriever
-import android.view.View
-import android.view.View.OnClickListener
 import android.widget.Button
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
-import android.media.audiofx.Equalizer
-import android.media.audiofx.AudioEffect
-import java.lang.Object
-import android.media.MediaPlayer
-import android.media.session.MediaSessionManager
-import android.os.Handler
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.getSystemService
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.AssertionError
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -34,6 +23,14 @@ class SettingsActivity : AppCompatActivity() {
         // TO-DO: Find a way to get the current song information here!
 
         var button = findViewById<Button>(R.id.button_settings_darkMode)
+        var seekR = findViewById<SeekBar>(R.id.seekBar_settings_color)
+        var seekG = findViewById<SeekBar>(R.id.seekBar_settings_colorG)
+        var seekB = findViewById<SeekBar>(R.id.seekBar_settings_colorB)
+
+        var nav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        var red: Float = 0F
+        var green: Float = 0F
+        var blue: Float = 0F
 
         val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
         val sharedPrefsEdit: SharedPreferences.Editor = appSettingPrefs.edit()
@@ -62,6 +59,82 @@ class SettingsActivity : AppCompatActivity() {
                 sharedPrefsEdit.apply()
             }
         }
+
+        fun converthex(num:Int): String {
+            var list = listOf("0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F")
+            var yeet = list[num.toInt()]
+            return yeet
+        }
+
+        fun rgbtohex3(red:Float, green:Float, blue:Float):String{
+            var d1="0";var d3="0";var d5="0"
+            d1 = converthex((red/16).toInt())
+            d3 = converthex((green/16).toInt())
+            d5 = converthex((blue/16).toInt())
+            return "#" + d1 + d3 + d5
+        }
+
+        fun rgbtohex(red:Float, green:Float, blue:Float):String{
+            var d1="0";var d2="0";var d3="0";var d4="0";var d5="0";var d6="0";
+            d1 = converthex((red/16).toInt())
+            d2 = converthex(((red/16 - red/16.toInt())*16).toInt())
+            d3 = converthex((green/16).toInt())
+            d4 = converthex(((green/16 - green/16.toInt())*16).toInt())
+            d5 = converthex((blue/16).toInt())
+            d6 = converthex(((blue/16 - blue/16.toInt())*16).toInt())
+            return "#" + d1 + d2 + d3 + d4 + d5 + d6
+
+        }
+
+       seekR.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+           override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
+               red = (progress * 2.55).toFloat()
+
+               button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+               nav.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+           }
+
+           override fun onStartTrackingTouch(seekbar: SeekBar?) {
+               button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+           }
+
+           override fun onStopTrackingTouch(seekbar: SeekBar?) {
+               button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+           }
+       })
+
+        seekG.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
+                green = (progress * 2.55).toFloat()
+
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
+
+            override fun onStartTrackingTouch(seekbar: SeekBar?) {
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
+
+            override fun onStopTrackingTouch(seekbar: SeekBar?) {
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
+        })
+
+        seekB.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
+                blue = (progress * 2.55).toFloat()
+
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
+
+            override fun onStartTrackingTouch(seekbar: SeekBar?) {
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
+
+            override fun onStopTrackingTouch(seekbar: SeekBar?) {
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
+        })
+
 
         findViewById<Button>(R.id.button_settings_title).setOnClickListener {
             val intent = Intent(this, BackgroundSoundService::class.java)
@@ -104,5 +177,12 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+
+
     }
+
 }
+
+
+
+
