@@ -8,12 +8,13 @@
         <entry key="app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.169" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.32685185185185184" />
         <entry key="app/src/main/res/drawable/title_box.xml" value="0.2375" />
-        <entry key="app/src/main/res/layout/activity_compressor.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_compressor.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_equalizer.xml" value="0.3138586956521739" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24583333333333332" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_testing.xml" value="0.335" />
         <entry key="app/src/main/res/layout/activity_volume.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/actions.xml" value="0.15989583333333332" />
         <entry key="app/src/main/res/menu/nav_menu.xml" value="0.35052083333333334" />
       </map>
     </option>

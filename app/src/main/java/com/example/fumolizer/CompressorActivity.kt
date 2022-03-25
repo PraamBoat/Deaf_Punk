@@ -1,35 +1,78 @@
 package com.example.fumolizer
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.view.View
-import android.view.View.OnClickListener
-import android.widget.Button
-import android.widget.Toast
-import android.media.audiofx.Equalizer
-import android.media.audiofx.AudioEffect
-import java.lang.Object
-import android.media.MediaPlayer
+import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.MediaRecorder
 import android.os.Build
-import android.os.Handler
+import android.os.Bundle
+import android.util.Log
+import android.widget.Button
 import android.widget.ImageButton
+import android.widget.SeekBar
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.AssertionError
+import java.io.IOException
+import java.lang.Math.log10
+import java.util.jar.Manifest
+import kotlin.math.roundToInt
 
 class CompressorActivity : AppCompatActivity() {
 
     lateinit var broadCastReceiver : BroadcastReceiver
     var iF = IntentFilter()
+    lateinit var mRecorder : MediaRecorder
+    var permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
+
+    val bchan = ContextClass.applicationContext().getSystemService(AUDIO_SERVICE) as AudioManager
+    val maxVolume = bchan.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+    val currentVolume = bchan.getStreamVolume(AudioManager.STREAM_MUSIC)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compressor)
+
+        val seeker = findViewById(R.id.compressorBar) as SeekBar
+        seeker.max = maxVolume
+        seeker.progress = currentVolume
+
+        if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED){
+            mRecorder =  MediaRecorder()
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            mRecorder.setOutputFile("/dev/null")
+            mRecorder.prepare()
+            mRecorder.start()
+        }
+        else {
+            ActivityCompat.requestPermissions(this, permissions, 1)
+        }
+
+        seeker.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+
+            // WARNING: RUNNING THIS LINE CRASHES THE PROGRAM ON EMULATOR! MUST USE PHYSICAL DEVICE!
+
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                Log.v("compressor", "bar called")
+                val powerBot = 20 * log10(getAmplitude().toDouble())
+                Log.v("compressor", powerBot.toString())
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                TODO("Not yet implemented")
+            }
+        })
 
         val barTitle = findViewById<Button>(R.id.button_compressor_title)
 
@@ -128,6 +171,29 @@ class CompressorActivity : AppCompatActivity() {
                 else -> throw AssertionError()
             }
         }
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        mRecorder =  MediaRecorder()
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        mRecorder.setOutputFile("/dev/null")
+        mRecorder.prepare()
+        mRecorder.start()
+    }
+
+    fun getAmplitude(): Int {
+        if (mRecorder != null)
+            return  (mRecorder.maxAmplitude)
+        else
+            return 0
 
     }
 

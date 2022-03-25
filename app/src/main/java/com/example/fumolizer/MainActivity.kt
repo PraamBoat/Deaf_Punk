@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
 import android.content.*
+import android.content.pm.PackageManager
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -22,6 +23,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 

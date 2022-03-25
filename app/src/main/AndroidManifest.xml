@@ -4,6 +4,7 @@
     package="com.example.fumolizer">
 
     <uses-permission android:name="MODIFY_AUDIO_PERMISSIONS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"></uses-permission>
 
     <application
         android:allowBackup="true"

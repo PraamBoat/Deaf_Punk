@@ -1,13 +1,15 @@
 package com.example.fumolizer
 
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -24,6 +26,9 @@ class SettingsActivity : AppCompatActivity() {
     var green: Float = 0F
     var blue: Float = 0F
 
+    lateinit var broadCastReceiver : BroadcastReceiver
+    var iF = IntentFilter()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +44,65 @@ class SettingsActivity : AppCompatActivity() {
         var seekB = findViewById<SeekBar>(R.id.seekBar_settings_colorB)
 
         var nav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        val nextButton = findViewById<ImageButton>(R.id.imageButton_settings_next)
+        val backButton = findViewById<ImageButton>(R.id.imageButton_settings_back)
+        val playButton = findViewById<ImageButton>(R.id.imageButton_settings_play)
+
+        val barTitle = findViewById<Button>(R.id.button_settings_barTitle)
+
+        iF.addAction("com.android.music.metachanged")
+        iF.addAction("com.htc.music.metachanged")
+        iF.addAction("fm.last.android.metachanged")
+        iF.addAction("com.sec.android.app.music.metachanged")
+        iF.addAction("com.nullsoft.winamp.metachanged")
+        iF.addAction("com.amazon.mp3.metachanged")
+        iF.addAction("com.miui.player.metachanged")
+        iF.addAction("com.real.IMP.metachanged")
+        iF.addAction("com.sonyericsson.music.metachanged")
+        iF.addAction("com.rdio.android.metachanged")
+        iF.addAction("com.samsung.sec.android.MusicPlayer.metachanged")
+        iF.addAction("com.andrew.apollo.metachanged")
+        iF.addAction("in.krosbits.musicolet")
+        iF.addAction("in.krosbits.musicolet.metachanged")
+        iF.addAction("AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION")
+        iF.addAction("AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION")
+        if (intent == null){
+            barTitle.text = "Error: Please change song"
+        }
+        else{
+            barTitle.text = intent.getStringExtra("barTitle")
+        }
+
+        broadCastReceiver = object : BroadcastReceiver() {
+            @RequiresApi(Build.VERSION_CODES.Q)
+            override fun onReceive(contxt: Context?, intent: Intent?) {
+
+                val newTitle = intent?.getStringExtra("track").toString()
+                barTitle.text = "Now Playing: $newTitle"
+
+            }
+        }
+
+        registerReceiver(broadCastReceiver, iF)
+
+        nextButton.setOnClickListener{
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "forward")
+            startService(intent)
+        }
+
+        backButton.setOnClickListener {
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "backwards")
+            startService(intent)
+        }
+
+        playButton.setOnClickListener {
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "playing")
+            startService(intent)
+        }
 
         fun updateViews() {
             button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
@@ -146,24 +210,28 @@ class SettingsActivity : AppCompatActivity() {
             when (it.itemId){
                 R.id.ic_volume -> {
                     val intent = Intent(this, VolumeActivity::class.java)
+                    intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
                     finish()
                     true
                 }
                 R.id.ic_equalizer -> {
                     val intent = Intent(this, EqualizerActivity::class.java)
+                    intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
                     finish()
                     true
                 }
                 R.id.ic_fumolizer -> {
                     val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
                     finish()
                     true
                 }
                 R.id.ic_compressor -> {
                     val intent = Intent(this, CompressorActivity::class.java)
+                    intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
                     finish()
                     true
