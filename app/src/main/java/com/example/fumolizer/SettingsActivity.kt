@@ -242,10 +242,10 @@ class SettingsActivity : AppCompatActivity() {
 
     }
 
-
+    var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+    var editor = sharedPreferences.edit()
     fun saveData() {
-        var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        var editor = sharedPreferences.edit()
+
 
         editor.putInt(SAVEHUE, hue)
         editor.putFloat(SAVESAT, sat)
@@ -264,7 +264,10 @@ class SettingsActivity : AppCompatActivity() {
 
     }
 
-
+    fun clear(){
+        editor.clear()
+        editor.commit()
+    }
 
 }
 
