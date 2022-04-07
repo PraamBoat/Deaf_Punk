@@ -97,13 +97,13 @@ class BackgroundSoundService : Service() {
 
         //Presets
         if(intent.getStringExtra("action").toString() == "preset1") {
-            changeEqualizer(0.toShort(), 50.toShort(), 300.toShort(), 0.toShort())
+            changeEqualizer(150, 30, 0, 0, 0)
         }
         if(intent.getStringExtra("action").toString() == "preset2") {
-            changeEqualizer(200.toShort(), 200.toShort(), 200.toShort(), 200.toShort())
+            changeEqualizer(0, 30, 150, 30, 0)
         }
         if(intent.getStringExtra("action").toString() == "preset3") {
-            changeEqualizer(1000.toShort(), 1000.toShort(), 1000.toShort(), 1000.toShort())
+            changeEqualizer(0, 0, 0, 30, 150)
         }
 
         // Kill switch for the player. Used in MainActivity
@@ -161,15 +161,15 @@ class BackgroundSoundService : Service() {
 
 
 
-    fun changeEqualizer (band1: Short, band2: Short, band3: Short, band4: Short ) {
-        equalizeService.setBandLevel(1.toShort(), band1)
-        equalizeService.setBandLevel(2.toShort(), band2)
-        equalizeService.setBandLevel(3.toShort(), band3)
-        equalizeService.setBandLevel(4.toShort(), band4)
+    fun changeEqualizer (band0: Short, band1: Short, band2: Short, band3: Short, band4: Short ) {
+        equalizeService.setBandLevel(0, band0)
+        equalizeService.setBandLevel(1, band1)
+        equalizeService.setBandLevel(2, band2)
+        equalizeService.setBandLevel(3, band3)
+        equalizeService.setBandLevel(4, band4)
 
         equalizeService.enabled = true
         Log.v("service", "Equalizer changed successful")
-
     }
 
     override fun onStart(intent: Intent, startId: Int) {
