@@ -1,9 +1,6 @@
 package com.example.fumolizer
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.MediaRecorder
@@ -17,6 +14,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.io.IOException
 import java.lang.Math.log10
@@ -132,6 +130,17 @@ class CompressorActivity : AppCompatActivity() {
             val intent = Intent(this, BackgroundSoundService::class.java)
             intent.putExtra("action", "playing")
             startService(intent)
+        }
+
+        val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+        val isNightModeOn: Boolean = appSettingPrefs.getBoolean( "NightMode", false)
+
+        if(isNightModeOn) {
+            nextButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            playButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            backButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            barTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
+
         }
 
         findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.ic_compressor

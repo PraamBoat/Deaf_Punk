@@ -1,18 +1,16 @@
 package com.example.fumolizer
 
 
-import android.content.BroadcastReceiver
-import android.content.Context
+import android.content.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.content.Intent
-import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Build
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 
@@ -108,6 +106,17 @@ class VolumeActivity : AppCompatActivity() {
             val intent = Intent(this, BackgroundSoundService::class.java)
             intent.putExtra("action", "playing")
             startService(intent)
+        }
+
+        val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+        val isNightModeOn: Boolean = appSettingPrefs.getBoolean( "NightMode", false)
+
+        if(isNightModeOn) {
+            nextButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            playButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            backButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            barTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
+
         }
 
 

@@ -16,6 +16,8 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.String
@@ -172,6 +174,17 @@ class EqualizerActivity : AppCompatActivity() {
             val intent = Intent(this, BackgroundSoundService::class.java)
             intent.putExtra("action", "playing")
             startService(intent)
+        }
+
+        val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+        val isNightModeOn: Boolean = appSettingPrefs.getBoolean( "NightMode", false)
+
+        if(isNightModeOn) {
+            nextButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            playButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            backButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            barTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
+
         }
 
         // Navigation Menu Code that allows you to change activity.

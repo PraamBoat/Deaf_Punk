@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -24,10 +25,20 @@ import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 
 class MainActivity : AppCompatActivity() {
+
+    val SHARED_PREFS = "sharedPrefs"
+    val SAVERED = "savered"
+    val SAVEGREEN = "savegreen"
+    val SAVEBLUE = "saveblue"
+
+    var red: Float = 0F
+    var green: Float = 0F
+    var blue: Float = 0F
 
     lateinit var broadCastReceiver : BroadcastReceiver
     var iF = IntentFilter()
@@ -97,6 +108,7 @@ class MainActivity : AppCompatActivity() {
             startService(intent)
         }
 
+
         // Listener that checks whether the image is held is released, doing different things depending on action.
         // TO-DO: Make the clickable image a circle instead of covering the whole screen.
 
@@ -119,6 +131,10 @@ class MainActivity : AppCompatActivity() {
         val isNightModeOn: Boolean = appSettingPrefs.getBoolean("NightMode", false)
         if(isNightModeOn) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            nextButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            playButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            backButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            barTitle.setTextColor((ContextCompat.getColor(this, R.color.black)))
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
@@ -162,6 +178,43 @@ class MainActivity : AppCompatActivity() {
                 else -> throw AssertionError()
             }
         }
+
+        fun converthex(num:Int): String {
+            var list = listOf("0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F")
+            var yeet = list[num.toInt()]
+            return yeet
+        }
+
+        fun rgbtohex(red:Float, green:Float, blue:Float):String{
+            var d1="0";var d2="0";var d3="0";var d4="0";var d5="0";var d6="0";
+            d1 = converthex((red/16).toInt())
+            d2 = converthex(((red/16 - red/16.toInt())*16).toInt())
+            d3 = converthex((green/16).toInt())
+            d4 = converthex(((green/16 - green/16.toInt())*16).toInt())
+            d5 = converthex((blue/16).toInt())
+            d6 = converthex(((blue/16 - blue/16.toInt())*16).toInt())
+            return "#" + d1 + d2 + d3 + d4 + d5 + d6
+
+        }
+
+        fun updateViews() {
+            nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+        }
+
+
+        fun loadData() {
+            var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+            red= sharedPreferences.getFloat(SAVERED, 12F)
+            green = sharedPreferences.getFloat(SAVEGREEN, 12F)
+            blue = sharedPreferences.getFloat(SAVEBLUE, 12F)
+
+        }
+
+        loadData()
+        updateViews()
     }
 
 }
