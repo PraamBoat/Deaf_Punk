@@ -24,6 +24,7 @@
             android:layout_height="50dp"
             android:layout_marginBottom="56dp"
             android:backgroundTint="@color/purple_500"
+
             android:enabled="false"
             android:text="Button"
             android:autoSizeTextType="uniform"

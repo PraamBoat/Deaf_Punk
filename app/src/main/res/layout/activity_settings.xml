@@ -85,26 +85,26 @@
 
 
             <SeekBar
-                android:id="@+id/seekBar_settings_color"
+                android:id="@+id/seekBar_settings_colorH"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="56dp"
-                app:layout_constraintBottom_toTopOf="@+id/seekBar_settings_colorG"
+                app:layout_constraintBottom_toTopOf="@+id/seekBar_settings_colorS"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <SeekBar
-                android:id="@+id/seekBar_settings_colorG"
+                android:id="@+id/seekBar_settings_colorS"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="60dp"
-                app:layout_constraintBottom_toTopOf="@+id/seekBar_settings_colorB"
+                app:layout_constraintBottom_toTopOf="@+id/seekBar_settings_colorL"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <SeekBar
-                android:id="@+id/seekBar_settings_colorB"
+                android:id="@+id/seekBar_settings_colorL"
                 android:layout_width="0dp"
                 android:layout_height="12dp"
                 android:layout_marginBottom="56dp"

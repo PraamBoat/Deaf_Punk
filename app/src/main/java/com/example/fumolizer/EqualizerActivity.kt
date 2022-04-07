@@ -2,6 +2,7 @@ package com.example.fumolizer
 
 
 import android.content.*
+import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.audiofx.PresetReverb
 import android.view.MenuInflater
@@ -26,6 +27,12 @@ class EqualizerActivity : AppCompatActivity() {
     lateinit var broadCastReceiver : BroadcastReceiver
     var iF = IntentFilter()
 
+    val SHARED_PREFS = "sharedPrefs"
+    val SAVEHEX = "savehex"
+    var hex = "#7C0696"
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_equalizer)
@@ -37,6 +44,17 @@ class EqualizerActivity : AppCompatActivity() {
         var start = findViewById(R.id.button_equalizer_start) as Button
 
         val barTitle = findViewById<Button>(R.id.button_equalizer_title)
+
+        fun updateViews() {
+            stop.setBackgroundColor(Color.parseColor(hex))
+            presets.setBackgroundColor(Color.parseColor(hex))
+            equal.setBackgroundColor(Color.parseColor(hex))
+            cancel.setBackgroundColor(Color.parseColor(hex))
+            start.setBackgroundColor(Color.parseColor(hex))
+        }
+
+        loadData()
+        updateViews()
 
         if (intent == null){
             barTitle.text = "Error: Please change song"
@@ -197,6 +215,11 @@ class EqualizerActivity : AppCompatActivity() {
 
     }
 
+    fun loadData() {
 
+        var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+        hex = sharedPreferences.getString(SAVEHEX,"#7C0696").toString()
+
+    }
 
 }
