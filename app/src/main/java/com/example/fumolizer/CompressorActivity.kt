@@ -47,7 +47,7 @@ class CompressorActivity : AppCompatActivity() {
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
             mRecorder.setOutputFile("/dev/null")
             mRecorder.prepare()
-            mRecorder.start()
+           // mRecorder.start()
         }
         else {
             ActivityCompat.requestPermissions(this, permissions, 1)
@@ -180,7 +180,6 @@ class CompressorActivity : AppCompatActivity() {
                 else -> throw AssertionError()
             }
         }
-
     }
 
     override fun onRequestPermissionsResult(
@@ -205,5 +204,4 @@ class CompressorActivity : AppCompatActivity() {
             return 0
 
     }
-
 }

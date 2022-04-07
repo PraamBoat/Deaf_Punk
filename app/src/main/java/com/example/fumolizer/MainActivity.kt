@@ -81,10 +81,8 @@ class MainActivity : AppCompatActivity() {
         broadCastReceiver = object : BroadcastReceiver() {
             @RequiresApi(Build.VERSION_CODES.Q)
             override fun onReceive(contxt: Context?, intent: Intent?) {
-
                 val newTitle = intent?.getStringExtra("track").toString()
                 barTitle.text = "Now Playing: $newTitle"
-
             }
         }
 
