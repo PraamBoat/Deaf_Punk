@@ -1,18 +1,25 @@
 package com.example.fumolizer
 
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.graphics.ColorUtils
+import androidx.core.content.ContextCompat
+import com.example.fumolizer.Utilities.hsltorgb
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.content.Intent
+import android.content.SharedPreferences
+import androidx.core.graphics.ColorUtils
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -23,7 +30,6 @@ class SettingsActivity : AppCompatActivity() {
     val SAVELIGHT = "savelight"
     val SAVEHEX = "savehex"
 
-
     var hue = 0
     var sat = 0F
     var light = 0F
@@ -32,21 +38,84 @@ class SettingsActivity : AppCompatActivity() {
     var blue: Float = 0F
     var hex = ""
 
+    lateinit var broadCastReceiver : BroadcastReceiver
+    var iF = IntentFilter()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
         val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
         val sharedPrefsEdit: SharedPreferences.Editor = appSettingPrefs.edit()
         val isNightModeOn: Boolean = appSettingPrefs.getBoolean( "NightMode", false)
-        // TO-DO: Find a way to get the current song information here!
+
         var button = findViewById<Button>(R.id.button_settings_darkMode)
         var seekH = findViewById<SeekBar>(R.id.seekBar_settings_colorH)
         var seekS = findViewById<SeekBar>(R.id.seekBar_settings_colorS)
         var seekL = findViewById<SeekBar>(R.id.seekBar_settings_colorL)
 
-        var bartile = findViewById<Button>(R.id.button_settings_barTitle)
+        var nav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        val nextButton = findViewById<ImageButton>(R.id.imageButton_settings_next)
+        val backButton = findViewById<ImageButton>(R.id.imageButton_settings_back)
+        val playButton = findViewById<ImageButton>(R.id.imageButton_settings_play)
+
+        val barTitle = findViewById<Button>(R.id.button_settings_barTitle)
+
+        iF.addAction("com.android.music.metachanged")
+        iF.addAction("com.htc.music.metachanged")
+        iF.addAction("fm.last.android.metachanged")
+        iF.addAction("com.sec.android.app.music.metachanged")
+        iF.addAction("com.nullsoft.winamp.metachanged")
+        iF.addAction("com.amazon.mp3.metachanged")
+        iF.addAction("com.miui.player.metachanged")
+        iF.addAction("com.real.IMP.metachanged")
+        iF.addAction("com.sonyericsson.music.metachanged")
+        iF.addAction("com.rdio.android.metachanged")
+        iF.addAction("com.samsung.sec.android.MusicPlayer.metachanged")
+        iF.addAction("com.andrew.apollo.metachanged")
+        iF.addAction("in.krosbits.musicolet")
+        iF.addAction("in.krosbits.musicolet.metachanged")
+        iF.addAction("AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION")
+        iF.addAction("AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION")
+        if (intent == null){
+            barTitle.text = "Error: Please change song"
+        }
+        else{
+            barTitle.text = intent.getStringExtra("barTitle")
+        }
+
+        broadCastReceiver = object : BroadcastReceiver() {
+            @RequiresApi(Build.VERSION_CODES.Q)
+            override fun onReceive(contxt: Context?, intent: Intent?) {
+
+                val newTitle = intent?.getStringExtra("track").toString()
+                barTitle.text = "Now Playing: $newTitle"
+
+            }
+        }
+
+        registerReceiver(broadCastReceiver, iF)
+
+        nextButton.setOnClickListener{
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "forward")
+            startService(intent)
+        }
+
+        backButton.setOnClickListener {
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "backwards")
+            startService(intent)
+        }
+
+        playButton.setOnClickListener {
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "playing")
+            startService(intent)
+        }
 
         fun updateViews() {
             hsltorgb(hue,sat,light)
@@ -54,16 +123,23 @@ class SettingsActivity : AppCompatActivity() {
             seekH.progress = (hue /3.6 ).toInt()
             seekS.progress = (sat *100).toInt()
             seekL.progress = (light *100).toInt()
+            nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+
         }
 
         loadData()
         updateViews()
 
-
-
         if(isNightModeOn) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             button.text = "Disable Dark Mode"
+            nextButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            playButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            backButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            barTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
 
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -86,25 +162,36 @@ class SettingsActivity : AppCompatActivity() {
         }
 
 
+        seekH.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
+                hue = (progress * 3.6).toInt()
+                hsltorgb(hue,sat,light)
 
-       seekH.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
-           override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
-               hue = (progress * 3.6).toInt()
-               hsltorgb(hue,sat,light)
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nav.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
 
-               button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
-               //bartile.setTint
-           }
+            override fun onStartTrackingTouch(seekbar: SeekBar?) {
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
 
-           override fun onStartTrackingTouch(seekbar: SeekBar?) {
-               button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
-           }
-
-           override fun onStopTrackingTouch(seekbar: SeekBar?) {
-               button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
-               saveData()
-           }
-       })
+            override fun onStopTrackingTouch(seekbar: SeekBar?) {
+                button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                saveData()
+            }
+        })
 
         seekS.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -112,14 +199,26 @@ class SettingsActivity : AppCompatActivity() {
                 hsltorgb(hue,sat,light)
 
                 button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar?) {
                 button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
 
             override fun onStopTrackingTouch(seekbar: SeekBar?) {
                 button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 saveData()
             }
         })
@@ -130,14 +229,26 @@ class SettingsActivity : AppCompatActivity() {
                 hsltorgb(hue,sat,light)
 
                 button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar?) {
                 button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
 
             override fun onStopTrackingTouch(seekbar: SeekBar?) {
                 button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+                barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 saveData()
             }
         })
@@ -158,24 +269,29 @@ class SettingsActivity : AppCompatActivity() {
             when (it.itemId){
                 R.id.ic_volume -> {
                     val intent = Intent(this, VolumeActivity::class.java)
+                    intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
                     finish()
                     true
                 }
                 R.id.ic_equalizer -> {
                     val intent = Intent(this, EqualizerActivity::class.java)
+                    intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
                     finish()
                     true
                 }
                 R.id.ic_fumolizer -> {
                     val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
                     finish()
                     true
                 }
                 R.id.ic_compressor -> {
                     val intent = Intent(this, CompressorActivity::class.java)
+                    intent.putExtra("barTitle", barTitle.text)
+                    intent.putExtra("red", red)
                     startActivity(intent)
                     finish()
                     true
@@ -189,7 +305,9 @@ class SettingsActivity : AppCompatActivity() {
 
 
 
+
     }
+
     fun converthex(num:Int): String {
         var list = listOf("0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F")
         var yeet = list[num]
@@ -232,12 +350,9 @@ class SettingsActivity : AppCompatActivity() {
         blue = (bluet+m)*255
     }
 
-
     fun saveData() {
         var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
         var editor = sharedPreferences.edit()
-
-
 
         editor.putInt(SAVEHUE, hue)
         editor.putFloat(SAVESAT, sat)
