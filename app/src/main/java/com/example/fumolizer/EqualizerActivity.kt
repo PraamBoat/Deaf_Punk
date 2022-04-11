@@ -1,6 +1,7 @@
 package com.example.fumolizer
 
 
+import android.annotation.SuppressLint
 import android.content.*
 import android.graphics.Color
 import android.media.MediaPlayer
@@ -10,10 +11,10 @@ import android.view.MenuItem
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.widget.Button
-import android.widget.PopupMenu
-import android.widget.ImageButton
-import android.widget.Toast
+import android.util.Log
+import android.view.KeyEvent
+import android.view.View
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -37,20 +38,18 @@ class EqualizerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_equalizer)
 
-        var stop = findViewById(R.id.button_equalizer_stop) as Button
+
         var presets = findViewById(R.id.button_equalizer_preset) as Button
         var equal = findViewById(R.id.button_equalizer_equal) as Button
         var cancel = findViewById(R.id.button_equalizer_cancel) as Button
-        var start = findViewById(R.id.button_equalizer_start) as Button
+        var switch = findViewById(R.id.switch_equalizer_check) as Switch
 
         val barTitle = findViewById<Button>(R.id.button_equalizer_title)
 
         fun updateViews() {
-            stop.setBackgroundColor(Color.parseColor(hex))
             presets.setBackgroundColor(Color.parseColor(hex))
             equal.setBackgroundColor(Color.parseColor(hex))
             cancel.setBackgroundColor(Color.parseColor(hex))
-            start.setBackgroundColor(Color.parseColor(hex))
         }
 
         loadData()
@@ -94,21 +93,7 @@ class EqualizerActivity : AppCompatActivity() {
 
         // Various buttons that work with the equalizer
 
-        start.setOnClickListener {
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("action", "play")
-            startService(intent)
-        }
-
-        stop.setOnClickListener {
-
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("action", "pause")
-            startService(intent)
-        }
-
         presets.setOnClickListener {
-
             val popup = PopupMenu(this, it)
             val inflater: MenuInflater = popup.menuInflater
             inflater.inflate(R.menu.actions, popup.menu)
@@ -116,18 +101,24 @@ class EqualizerActivity : AppCompatActivity() {
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.Preset1 -> {
+                        switch.isChecked = true
+                        presets.text = "Base"
                         val intent = Intent(this, BackgroundSoundService::class.java)
                         intent.putExtra("action", "preset1")
                         startService(intent)
                         true
                     }
                     R.id.Preset2 -> {
+                        switch.isChecked = true
+                        presets.text = "Vocal"
                         val intent = Intent(this, BackgroundSoundService::class.java)
                         intent.putExtra("action", "preset2")
                         startService(intent)
                         true
                     }
                     R.id.Preset3 -> {
+                        switch.isChecked = true
+                        presets.text = "Treble"
                         val intent = Intent(this, BackgroundSoundService::class.java)
                         intent.putExtra("action", "preset3")
                         startService(intent)
@@ -138,19 +129,46 @@ class EqualizerActivity : AppCompatActivity() {
             }
         }
 
-        equal.setOnClickListener{
-
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("action", "equalize")
-            startService(intent)
-
-        }
-
         cancel.setOnClickListener{
+            switch.isChecked = false
             val intent = Intent(this, BackgroundSoundService::class.java)
             intent.putExtra("action", "cancel")
             startService(intent)
         }
+
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked) {
+                if(presets.text == "Base") {
+                    val intent = Intent(this, BackgroundSoundService::class.java)
+                    intent.putExtra("action", "preset1")
+                    startService(intent)
+                }
+                else if(presets.text == "Vocal") {
+                    val intent = Intent(this, BackgroundSoundService::class.java)
+                    intent.putExtra("action", "preset2")
+                    startService(intent)
+                }
+                else if(presets.text == "Treble") {
+                    val intent = Intent(this, BackgroundSoundService::class.java)
+                    intent.putExtra("action", "preset3")
+                    startService(intent)
+                }
+                else {
+                    Log.e("test", "else'd")
+                    val intent = Intent(this, BackgroundSoundService::class.java)
+                    intent.putExtra("action", "cancel")
+                    startService(intent)
+                }
+            }
+            else {
+                Log.e("test", "cancel")
+                val intent = Intent(this, BackgroundSoundService::class.java)
+                intent.putExtra("action", "cancel")
+                startService(intent)
+            }
+        }
+        
+
 
         val nextButton = findViewById<ImageButton>(R.id.imageButton_equalizer_next)
         val backButton = findViewById<ImageButton>(R.id.imageButton_equalizer_back)
@@ -212,7 +230,6 @@ class EqualizerActivity : AppCompatActivity() {
                 else -> throw AssertionError()
             }
         }
-
     }
 
     fun loadData() {

@@ -211,7 +211,7 @@ class SettingsActivity : AppCompatActivity() {
         var greent = 0F
         var bluet = 0F
         var C = l * s
-        var X = (C * (1-Math.abs((h/60)%2-1)))
+        var X = (C * (1-Math.abs((h/60F)%2-1)))
         var m = l - C
 
         if (h in 0..59){redt=C; greent=X; bluet=0F}
