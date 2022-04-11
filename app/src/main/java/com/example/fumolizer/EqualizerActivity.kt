@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.*
@@ -62,15 +61,6 @@ class EqualizerActivity : AppCompatActivity() {
         var switch = findViewById(R.id.switch_equalizer_check) as Switch
 
         val barTitle = findViewById<Button>(R.id.button_equalizer_title)
-
-        fun updateViews() {
-            presets.setBackgroundColor(Color.parseColor(hex))
-            equal.setBackgroundColor(Color.parseColor(hex))
-            cancel.setBackgroundColor(Color.parseColor(hex))
-        }
-
-        loadData()
-        updateViews()
 
         if (intent == null){
             barTitle.text = "Error: Please change song"
@@ -320,7 +310,7 @@ class EqualizerActivity : AppCompatActivity() {
         updateViews()
     }
 
-}
+}}
 
 
 
