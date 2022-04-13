@@ -364,9 +364,9 @@ class SettingsActivity : AppCompatActivity() {
 
     fun loadData() {
         var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        hue= sharedPreferences.getInt(SAVEHUE, 100)
-        sat = sharedPreferences.getFloat(SAVESAT, 12F)
-        light = sharedPreferences.getFloat(SAVELIGHT, 12F)
+        hue= sharedPreferences.getInt(SAVEHUE, 0)
+        sat = sharedPreferences.getFloat(SAVESAT, 0F)
+        light = sharedPreferences.getFloat(SAVELIGHT, 0F)
         hex = sharedPreferences.getString(SAVEHEX,"#FFFFFF").toString()
     }
 

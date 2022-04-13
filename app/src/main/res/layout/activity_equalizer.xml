@@ -48,7 +48,6 @@
             android:id="@+id/button_equalizer_preset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="150dp"
             android:layout_marginBottom="150dp"
             android:text="Presets"
             app:layout_constraintBottom_toTopOf="@+id/button_equalizer_title"
