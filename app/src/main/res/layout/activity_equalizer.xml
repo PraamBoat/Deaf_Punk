@@ -25,7 +25,7 @@
             android:layout_marginTop="50dp"
             android:minHeight="48dp"
             android:text="Equalizer"
-            app:layout_constraintEnd_toEndOf="@+id/button_equalizer_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,22 +43,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageButton_equalizer_back"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/button_equalizer_equal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Equal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/button_equalizer_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/button_equalizer_preset"

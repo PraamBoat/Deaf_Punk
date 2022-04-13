@@ -35,8 +35,8 @@ class EqualizerActivity : AppCompatActivity() {
     var iF = IntentFilter()
 
     val SHARED_PREFS = "sharedPrefs"
-    val SAVEHUE = "savehue"
-    val SAVESAT = "savesat"
+    val SAVECURRENT = "current equalizer"
+    val SAVEISON = "on/off"
     val SAVELIGHT = "savelight"
     val SAVEHEX = "savehex"
 
@@ -47,6 +47,8 @@ class EqualizerActivity : AppCompatActivity() {
     var green: Float = 0F
     var blue: Float = 0F
     var hex = ""
+    var current = ""
+    var isOn:Boolean = false
 
 
 
@@ -56,8 +58,6 @@ class EqualizerActivity : AppCompatActivity() {
 
 
         var presets = findViewById(R.id.button_equalizer_preset) as Button
-        var equal = findViewById(R.id.button_equalizer_equal) as Button
-        var cancel = findViewById(R.id.button_equalizer_cancel) as Button
         var switch = findViewById(R.id.switch_equalizer_check) as Switch
 
         val barTitle = findViewById<Button>(R.id.button_equalizer_title)
@@ -98,6 +98,14 @@ class EqualizerActivity : AppCompatActivity() {
 
         registerReceiver(broadCastReceiver, iF)
 
+        fun updateData() {
+            presets.text = current
+            switch.isChecked = isOn
+        }
+
+        loadData()
+        updateData()
+
         // Various buttons that work with the equalizer
 
         presets.setOnClickListener {
@@ -110,6 +118,9 @@ class EqualizerActivity : AppCompatActivity() {
                     R.id.Preset1 -> {
                         switch.isChecked = true
                         presets.text = "Base"
+                        current = presets.text as kotlin.String
+                        isOn = true
+                        saveData()
                         val intent = Intent(this, BackgroundSoundService::class.java)
                         intent.putExtra("action", "preset1")
                         startService(intent)
@@ -118,6 +129,9 @@ class EqualizerActivity : AppCompatActivity() {
                     R.id.Preset2 -> {
                         switch.isChecked = true
                         presets.text = "Vocal"
+                        current = presets.text as kotlin.String
+                        isOn = true
+                        saveData()
                         val intent = Intent(this, BackgroundSoundService::class.java)
                         intent.putExtra("action", "preset2")
                         startService(intent)
@@ -126,6 +140,9 @@ class EqualizerActivity : AppCompatActivity() {
                     R.id.Preset3 -> {
                         switch.isChecked = true
                         presets.text = "Treble"
+                        current = presets.text as kotlin.String
+                        isOn = true
+                        saveData()
                         val intent = Intent(this, BackgroundSoundService::class.java)
                         intent.putExtra("action", "preset3")
                         startService(intent)
@@ -136,34 +153,36 @@ class EqualizerActivity : AppCompatActivity() {
             }
         }
 
-        cancel.setOnClickListener{
-            switch.isChecked = false
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("action", "cancel")
-            startService(intent)
-        }
 
         switch.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked) {
                 if(presets.text == "Base") {
                     val intent = Intent(this, BackgroundSoundService::class.java)
                     intent.putExtra("action", "preset1")
+                    isOn = true
+                    saveData()
                     startService(intent)
                 }
                 else if(presets.text == "Vocal") {
                     val intent = Intent(this, BackgroundSoundService::class.java)
                     intent.putExtra("action", "preset2")
+                    isOn = true
+                    saveData()
                     startService(intent)
                 }
                 else if(presets.text == "Treble") {
                     val intent = Intent(this, BackgroundSoundService::class.java)
                     intent.putExtra("action", "preset3")
+                    isOn = true
+                    saveData()
                     startService(intent)
                 }
                 else {
                     Log.e("test", "else'd")
                     val intent = Intent(this, BackgroundSoundService::class.java)
                     intent.putExtra("action", "cancel")
+                    isOn = true
+                    saveData()
                     startService(intent)
                 }
             }
@@ -171,6 +190,8 @@ class EqualizerActivity : AppCompatActivity() {
                 Log.e("test", "cancel")
                 val intent = Intent(this, BackgroundSoundService::class.java)
                 intent.putExtra("action", "cancel")
+                isOn = false
+                saveData()
                 startService(intent)
             }
         }
@@ -298,19 +319,24 @@ class EqualizerActivity : AppCompatActivity() {
             playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
-        }
+        } }
 
+    fun saveData() {
+        var sharedPrefs:SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+        var editor = sharedPrefs.edit()
 
-    fun loadData() {
-
-        var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        hex = sharedPreferences.getString(SAVEHEX,"#7C0696").toString()
-
-        loadData()
-        updateViews()
+        editor.putString(SAVECURRENT, current)
+        editor.putBoolean(SAVEISON, isOn)
+        editor.apply()
     }
 
-}}
+    fun loadData() {
+        var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+        current = sharedPreferences.getString(SAVECURRENT,"Presets").toString()
+        isOn = sharedPreferences.getBoolean(SAVEISON, false)
+
+    }
+}
 
 
 

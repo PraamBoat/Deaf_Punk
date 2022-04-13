@@ -358,7 +358,7 @@ class SettingsActivity : AppCompatActivity() {
         editor.putFloat(SAVESAT, sat)
         editor.putFloat(SAVELIGHT, light)
         editor.putString(SAVEHEX, hex)
-        editor.apply();
+        editor.apply()
 
     }
 
@@ -368,7 +368,6 @@ class SettingsActivity : AppCompatActivity() {
         sat = sharedPreferences.getFloat(SAVESAT, 12F)
         light = sharedPreferences.getFloat(SAVELIGHT, 12F)
         hex = sharedPreferences.getString(SAVEHEX,"#FFFFFF").toString()
-
     }
 
 
