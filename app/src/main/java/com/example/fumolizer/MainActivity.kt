@@ -212,18 +212,18 @@ class MainActivity : AppCompatActivity() {
             var redt = 0F
             var greent = 0F
             var bluet = 0F
-            //var C = ((1-Math.abs(2*l-1)) * s)
             var C = l * s
-            var X = (C * (1-Math.abs((h/60)%2-1)))
-            //var m = l - C/2
+            var X = (C * (1-Math.abs((h/60F)%2-1)))
             var m = l - C
 
-            if (h >= 0 && h < 60){redt=C; greent=X; bluet=0F}
-            else if (h >= 60 && h < 120){redt=X; greent=C; bluet=0F}
-            else if (h >= 120 && h < 180){redt=0F; greent=C; bluet=X}
-            else if (h >= 180 && h < 240){redt=0F; greent=X; bluet=C}
-            else if (h >= 240 && h < 300){redt=X; greent=0F; bluet=C}
-            else if (h >= 300 && h < 360){redt=C; greent=0F; bluet=X}
+            if (h in 0..59){redt=C; greent=X; bluet=0F}
+            else if (h in 60..119){redt=X; greent=C; bluet=0F}
+            else if (h in 120..179){redt=0F; greent=C; bluet=X}
+            else if (h in 180..239){redt=0F; greent=X; bluet=C}
+            else if (h in 240..299){redt=X; greent=0F; bluet=C}
+            else if (h in 300..359){redt=C; greent=0F; bluet=X}
+            else {redt=0F; greent=0F; bluet=0F}
+
             red = (redt+m)*255
             green = (greent+m)*255
             blue = (bluet+m)*255
