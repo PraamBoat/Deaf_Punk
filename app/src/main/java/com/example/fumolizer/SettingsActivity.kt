@@ -255,15 +255,6 @@ class SettingsActivity : AppCompatActivity() {
 
 
 
-
-
-        findViewById<Button>(R.id.button_settings_title).setOnClickListener {
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("meta", "title")
-            startService(intent)
-        }
-
-
         findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.ic_settings
         findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnNavigationItemSelectedListener {
             when (it.itemId){
