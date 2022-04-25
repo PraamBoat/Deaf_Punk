@@ -293,10 +293,6 @@ class SettingsActivity : AppCompatActivity() {
                 else -> throw AssertionError()
             }
         }
-
-
-
-
     }
 
     fun converthex(num:Int): String {
@@ -360,9 +356,6 @@ class SettingsActivity : AppCompatActivity() {
         light = sharedPreferences.getFloat(SAVELIGHT, 0F)
         hex = sharedPreferences.getString(SAVEHEX,"#FFFFFF").toString()
     }
-
-
-
 }
 
 

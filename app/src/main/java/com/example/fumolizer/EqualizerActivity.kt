@@ -58,7 +58,6 @@ class EqualizerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_equalizer)
 
-
         var presets = findViewById(R.id.button_equalizer_preset) as Button
         var switch = findViewById(R.id.switch_equalizer_check) as Switch
         val nextButton = findViewById<ImageButton>(R.id.imageButton_equalizer_next)
@@ -112,6 +111,12 @@ class EqualizerActivity : AppCompatActivity() {
             backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             barTitle.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+
+            if(switch.isChecked == isOn) {
+                val intent = Intent(this, BackgroundSoundService::class.java)
+                intent.putExtra("action", current)
+                startService(intent)
+            }
         }
 
         loadData()
@@ -345,8 +350,6 @@ class EqualizerActivity : AppCompatActivity() {
         sat = sharedPreferences.getFloat(SAVESAT, 0F)
         light = sharedPreferences.getFloat(SAVELIGHT, 0F)
         hex = sharedPreferences.getString(SAVEHEX,"#FFFFFF").toString()
-
-
     }
 }
 
