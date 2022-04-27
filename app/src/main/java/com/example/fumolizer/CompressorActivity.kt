@@ -3,35 +3,37 @@ package com.example.fumolizer
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.media.AudioManager
-import android.media.MediaRecorder
+import android.media.*
+import android.media.projection.MediaProjection
+import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
 import java.io.IOException
-import java.lang.Math.log10
-import java.util.jar.Manifest
-import kotlin.math.roundToInt
+import kotlin.math.abs
+import kotlin.math.log10
+
 
 class CompressorActivity : AppCompatActivity() {
 
     lateinit var broadCastReceiver : BroadcastReceiver
     var iF = IntentFilter()
-    lateinit var mRecorder : MediaRecorder
     var permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
 
     val bchan = ContextClass.applicationContext().getSystemService(AUDIO_SERVICE) as AudioManager
     val maxVolume = bchan.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-    val currentVolume = bchan.getStreamVolume(AudioManager.STREAM_MUSIC)
+    var currentVolume = bchan.getStreamVolume(AudioManager.STREAM_MUSIC)
 
     val SHARED_PREFS = "sharedPrefs"
     val SAVEHUE = "savehue"
@@ -47,45 +49,58 @@ class CompressorActivity : AppCompatActivity() {
     var blue: Float = 0F
     var hex = ""
 
+    var isRecording = false;
+    lateinit var record : AudioRecord
+    lateinit var mediaProjection : MediaProjection
+    lateinit var mProjectionManager : MediaProjectionManager
+    var maxAmpltiude = 0
+    var currentAmplitude = 0.0
+    lateinit var recordingThread : Thread
+    var currentDecibel = 0
+
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compressor)
 
         val seeker = findViewById(R.id.compressorBar) as SeekBar
+
+
+        val recordButton = findViewById<Button>(R.id.button)
+        val stopButton = findViewById<Button>(R.id.button2)
+
+
         seeker.max = maxVolume
         seeker.progress = currentVolume
 
-        if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED){
-            mRecorder =  MediaRecorder()
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            mRecorder.setOutputFile("/dev/null")
-            mRecorder.prepare()
-           // mRecorder.start()
-        }
-        else {
+        if (ActivityCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, permissions, 1)
         }
 
-        seeker.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+        requestRecording()
 
-            // WARNING: RUNNING THIS LINE CRASHES THE PROGRAM ON EMULATOR! MUST USE PHYSICAL DEVICE!
+        recordButton.setOnClickListener {
+            recordBegin()
+        }
 
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                Log.v("compressor", "bar called")
-                val powerBot = 20 * log10(getAmplitude().toDouble())
-                Log.v("compressor", powerBot.toString())
+        stopButton.setOnClickListener {
+            stopRecording()
+        }
+
+        findViewById<Button>(R.id.button3).setOnClickListener {
+            val deviceInfo = bchan.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+            for (device in deviceInfo){
+                currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
+                    bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
+                    device.type).toInt()
             }
+            Log.v("decibel", "$currentAmplitude")
+            Log.v("decibel", "$maxAmpltiude")
+            Log.v("decibel", "$currentDecibel")
+            Log.v("decibel", (currentDecibel + 20 * log10(currentAmplitude)).toString())
+        }
 
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                TODO("Not yet implemented")
-            }
-        })
 
         val barTitle = findViewById<Button>(R.id.button_compressor_title)
 
@@ -205,7 +220,6 @@ class CompressorActivity : AppCompatActivity() {
         fun rgbtohex(r:Float, g:Float, b:Float): kotlin.String {
             var d1="0";var d2="0";var d3="0";var d4="0";var d5="0";var d6="0"
             Log.e("d1",""+hue)
-            //red = (NEWhsl2hex(hue,sat,light) >> 16) & 0xff;
             d1 = converthex((r/16.0).toInt())
             d2 = converthex(((r/16.0 - (r/16).toInt())*16).toInt())
             d3 = converthex((g/16).toInt())
@@ -221,10 +235,8 @@ class CompressorActivity : AppCompatActivity() {
             var redt = 0F
             var greent = 0F
             var bluet = 0F
-            //var C = ((1-Math.abs(2*l-1)) * s)
             var C = l * s
             var X = (C * (1-Math.abs((h/60)%2-1)))
-            //var m = l - C/2
             var m = l - C
 
             if (h >= 0 && h < 60){redt=C; greent=X; bluet=0F}
@@ -261,26 +273,92 @@ class CompressorActivity : AppCompatActivity() {
         updateViews()
     }
 
+    fun requestRecording(){
+        val intent = Intent(this, MediaProjectionService::class.java)
+        startForegroundService(intent)
+        mProjectionManager = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), 1)
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        mRecorder =  MediaRecorder()
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-        mRecorder.setOutputFile("/dev/null")
-        mRecorder.prepare()
-        mRecorder.start()
+        mProjectionManager = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), 1)
     }
 
-    fun getAmplitude(): Int {
-        if (mRecorder != null)
-            return  (mRecorder.maxAmplitude)
-        else
-            return 0
+    private fun recordBegin() {
+
+        //requestRecording()
+        if (!isRecording) {
+            maxAmpltiude = 0
+            currentAmplitude = 0.0
+
+            Log.v("compressor", "Recording Started")
+            record.startRecording()
+            isRecording = true
+            recordingThread = Thread({ writeAudioDataToFile() }, "AudioRecorder Thread")
+            recordingThread.start()
+        }
 
     }
+
+    private fun writeAudioDataToFile() {
+
+        val sData = ShortArray(1024)
+        while (isRecording) {
+
+            record.read(sData, 0, 1024)
+            var sDataMax = 0.0
+
+            for (i in sData.indices) {
+                if (Math.abs(sData[i].toDouble()) >= maxAmpltiude) {
+                    maxAmpltiude = abs(sData[i].toInt())
+                }
+                currentAmplitude = Math.abs(sData[i].toDouble())
+            }
+        }
+    }
+
+
+
+    private fun stopRecording() {
+        // stops the recording activity
+        if (record != null) {
+            isRecording = false
+            record.stop()
+        }
+        Log.v("compressor", "Recording Ended")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                if (data != null){
+                    mediaProjection = mProjectionManager.getMediaProjection(resultCode, data!!)
+                    val config = AudioPlaybackCaptureConfiguration.Builder(mediaProjection)
+                        .addMatchingUsage(AudioAttributes.USAGE_MEDIA)
+                        .build()
+                    if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED){
+                        record = AudioRecord.Builder().setAudioPlaybackCaptureConfig(config)
+                            .setAudioFormat(AudioFormat.Builder()
+                                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                                .setSampleRate(32000)
+                                .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
+                                .build())
+                            .build()
+                    }
+                    else {
+                        ActivityCompat.requestPermissions(this, permissions, 1)
+                    }
+                }
+            }
+        }
+    }
+
 }

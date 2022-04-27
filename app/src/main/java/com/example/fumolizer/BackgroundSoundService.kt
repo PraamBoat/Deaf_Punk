@@ -173,7 +173,7 @@ class BackgroundSoundService : Service() {
     }
 
     override fun onStart(intent: Intent, startId: Int) {
-        // TO DO
+        registerReceiver(broadCastReceiver, iF)
     }
 
     fun onUnBind(arg0: Intent): IBinder? {
@@ -190,9 +190,13 @@ class BackgroundSoundService : Service() {
 
     }
 
-    override fun onDestroy() {
+    /*override fun onDestroy() {
         val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_STOP)
         achan.dispatchMediaKeyEvent(event)
+    }*/
+
+    override fun onDestroy() {
+        unregisterReceiver(broadCastReceiver)
     }
 
     override fun onLowMemory() {

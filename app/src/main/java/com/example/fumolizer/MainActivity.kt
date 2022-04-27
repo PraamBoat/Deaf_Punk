@@ -54,10 +54,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var red: Float = 0F
-        var green: Float = 0F
-        var blue: Float = 0F
-
         var pin = findViewById(R.id.imageView_main_power) as ImageView
         val nextButton = findViewById<ImageButton>(R.id.imageButton_main_next)
         val backButton = findViewById<ImageButton>(R.id.imageButton_main_back)
