@@ -255,15 +255,6 @@ class SettingsActivity : AppCompatActivity() {
 
 
 
-
-
-        findViewById<Button>(R.id.button_settings_title).setOnClickListener {
-            val intent = Intent(this, BackgroundSoundService::class.java)
-            intent.putExtra("meta", "title")
-            startService(intent)
-        }
-
-
         findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.ic_settings
         findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnNavigationItemSelectedListener {
             when (it.itemId){
@@ -302,10 +293,6 @@ class SettingsActivity : AppCompatActivity() {
                 else -> throw AssertionError()
             }
         }
-
-
-
-
     }
 
     fun converthex(num:Int): String {
@@ -334,7 +321,7 @@ class SettingsActivity : AppCompatActivity() {
         var greent = 0F
         var bluet = 0F
         var C = l * s
-        var X = (C * (1-Math.abs((h/60)%2-1)))
+        var X = (C * (1-Math.abs((h/60F)%2-1)))
         var m = l - C
 
         if (h in 0..59){redt=C; greent=X; bluet=0F}
@@ -358,21 +345,17 @@ class SettingsActivity : AppCompatActivity() {
         editor.putFloat(SAVESAT, sat)
         editor.putFloat(SAVELIGHT, light)
         editor.putString(SAVEHEX, hex)
-        editor.apply();
+        editor.apply()
 
     }
 
     fun loadData() {
         var sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        hue= sharedPreferences.getInt(SAVEHUE, 100)
-        sat = sharedPreferences.getFloat(SAVESAT, 12F)
-        light = sharedPreferences.getFloat(SAVELIGHT, 12F)
+        hue= sharedPreferences.getInt(SAVEHUE, 0)
+        sat = sharedPreferences.getFloat(SAVESAT, 0F)
+        light = sharedPreferences.getFloat(SAVELIGHT, 0F)
         hex = sharedPreferences.getString(SAVEHEX,"#FFFFFF").toString()
-
     }
-
-
-
 }
 
 

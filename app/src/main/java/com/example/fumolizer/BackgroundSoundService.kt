@@ -83,27 +83,19 @@ class BackgroundSoundService : Service() {
     @SuppressLint("WrongConstant")
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
-        // Start and stop player functions. Used in EqualizerActivity.
-        if (intent.getStringExtra("action").toString() == "play"){
-
-            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
-            achan.dispatchMediaKeyEvent(event)
-        }
-        if (intent.getStringExtra("action").toString() == "pause"){
-
-            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
-            achan.dispatchMediaKeyEvent(event)
-        }
 
         //Presets
-        if(intent.getStringExtra("action").toString() == "preset1") {
+        if(intent.getStringExtra("action").toString() == "Base") {
             changeEqualizer(150, 30, 0, 0, 0)
+
         }
-        if(intent.getStringExtra("action").toString() == "preset2") {
+        if(intent.getStringExtra("action").toString() == "Vocal") {
             changeEqualizer(0, 30, 150, 30, 0)
+
         }
-        if(intent.getStringExtra("action").toString() == "preset3") {
+        if(intent.getStringExtra("action").toString() == "Treble") {
             changeEqualizer(0, 0, 0, 30, 150)
+
         }
 
         // Kill switch for the player. Used in MainActivity
@@ -129,7 +121,7 @@ class BackgroundSoundService : Service() {
         }
 
         if (intent.getStringExtra("action").toString() == "cancel"){
-            equalizeService.enabled = false
+            killEqualizer()
         }
 
         if (intent.getStringExtra("action").toString() == "forward"){
@@ -159,8 +151,6 @@ class BackgroundSoundService : Service() {
         return 1
     }
 
-
-
     fun changeEqualizer (band0: Short, band1: Short, band2: Short, band3: Short, band4: Short ) {
         equalizeService.setBandLevel(0, band0)
         equalizeService.setBandLevel(1, band1)
@@ -168,8 +158,16 @@ class BackgroundSoundService : Service() {
         equalizeService.setBandLevel(3, band3)
         equalizeService.setBandLevel(4, band4)
 
-        equalizeService.enabled = true
+        activateEqualizer()
         Log.v("service", "Equalizer changed successful")
+    }
+
+    fun activateEqualizer() {
+        equalizeService.enabled = true
+    }
+
+    fun killEqualizer() {
+        equalizeService.enabled = false
     }
 
     override fun onStart(intent: Intent, startId: Int) {
