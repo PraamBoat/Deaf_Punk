@@ -85,15 +85,15 @@ class BackgroundSoundService : Service() {
 
 
         //Presets
-        if(intent.getStringExtra("action").toString() == "preset1") {
+        if(intent.getStringExtra("action").toString() == "Base") {
             changeEqualizer(150, 30, 0, 0, 0)
 
         }
-        if(intent.getStringExtra("action").toString() == "preset2") {
+        if(intent.getStringExtra("action").toString() == "Vocal") {
             changeEqualizer(0, 30, 150, 30, 0)
 
         }
-        if(intent.getStringExtra("action").toString() == "preset3") {
+        if(intent.getStringExtra("action").toString() == "Treble") {
             changeEqualizer(0, 0, 0, 30, 150)
 
         }

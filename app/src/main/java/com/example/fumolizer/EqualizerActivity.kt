@@ -174,21 +174,21 @@ class EqualizerActivity : AppCompatActivity() {
             if(isChecked) {
                 if(presets.text == "Base") {
                     val intent = Intent(this, BackgroundSoundService::class.java)
-                    intent.putExtra("action", "preset1")
+                    intent.putExtra("action", "Base")
                     isOn = true
                     saveData()
                     startService(intent)
                 }
                 else if(presets.text == "Vocal") {
                     val intent = Intent(this, BackgroundSoundService::class.java)
-                    intent.putExtra("action", "preset2")
+                    intent.putExtra("action", "Vocal")
                     isOn = true
                     saveData()
                     startService(intent)
                 }
                 else if(presets.text == "Treble") {
                     val intent = Intent(this, BackgroundSoundService::class.java)
-                    intent.putExtra("action", "preset3")
+                    intent.putExtra("action", "Treble")
                     isOn = true
                     saveData()
                     startService(intent)
