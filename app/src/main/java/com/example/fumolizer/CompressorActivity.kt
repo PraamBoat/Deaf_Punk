@@ -11,16 +11,14 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.SeekBar
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 import kotlin.math.abs
 import kotlin.math.log10
 
@@ -32,8 +30,6 @@ class CompressorActivity : AppCompatActivity() {
     var permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
 
     val bchan = ContextClass.applicationContext().getSystemService(AUDIO_SERVICE) as AudioManager
-    val maxVolume = bchan.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-    var currentVolume = bchan.getStreamVolume(AudioManager.STREAM_MUSIC)
 
     val SHARED_PREFS = "sharedPrefs"
     val SAVEHUE = "savehue"
@@ -49,7 +45,7 @@ class CompressorActivity : AppCompatActivity() {
     var blue: Float = 0F
     var hex = ""
 
-    var isRecording = false;
+    var isRecording = false
     lateinit var record : AudioRecord
     lateinit var mediaProjection : MediaProjection
     lateinit var mProjectionManager : MediaProjectionManager
@@ -57,6 +53,8 @@ class CompressorActivity : AppCompatActivity() {
     var currentAmplitude = 0.0
     lateinit var recordingThread : Thread
     var currentDecibel = 0
+    var currentMaxdB = 0
+    var lastFiveMaxdB = arrayOf(0, 0, 0, 0, 0)
 
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -64,15 +62,13 @@ class CompressorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compressor)
 
-        val seeker = findViewById(R.id.compressorBar) as SeekBar
+        val recordButton = findViewById<Button>(R.id.button_compressor_record)
+        val stopButton = findViewById<Button>(R.id.button_compressor_stoprecording)
+        val updateButton = findViewById<Button>(R.id.button_compressor_update)
+
+        val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
 
-        val recordButton = findViewById<Button>(R.id.button)
-        val stopButton = findViewById<Button>(R.id.button2)
-
-
-        seeker.max = maxVolume
-        seeker.progress = currentVolume
 
         if (ActivityCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, permissions, 1)
@@ -88,7 +84,7 @@ class CompressorActivity : AppCompatActivity() {
             stopRecording()
         }
 
-        findViewById<Button>(R.id.button3).setOnClickListener {
+        findViewById<Button>(R.id.button_compressor_update).setOnClickListener {
             val deviceInfo = bchan.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
             for (device in deviceInfo){
                 currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
@@ -99,6 +95,32 @@ class CompressorActivity : AppCompatActivity() {
             Log.v("decibel", "$maxAmpltiude")
             Log.v("decibel", "$currentDecibel")
             Log.v("decibel", (currentDecibel + 20 * log10(currentAmplitude)).toString())
+
+            var returndB = (currentDecibel + 20 * log10(currentAmplitude)).toInt()
+            if (returndB < 0){
+                returndB = 0
+            }
+
+            findViewById<TextView>(R.id.textView_compressor_currentdB).text = "Current dB: ${returndB}"
+
+            var listMax = 0
+            for (i in 0..4){
+                if (i == 4){
+                    lastFiveMaxdB[i] = returndB
+                }
+                else {
+                    lastFiveMaxdB[i] = lastFiveMaxdB[i+1]
+                }
+                if (lastFiveMaxdB[i] > listMax){
+                    listMax = lastFiveMaxdB[i]
+                    findViewById<TextView>(R.id.textView_compressor_maxdB).text = "Max dB: ${listMax}"
+                }
+            }
+
+
+            findViewById<TextView>(R.id.textView_compressor_averagedB).text = "AveragdB: " +
+                    "${((lastFiveMaxdB[0] + lastFiveMaxdB[1] + lastFiveMaxdB[2] + 
+                            lastFiveMaxdB[3] + lastFiveMaxdB[4]) / 5)}"
         }
 
 
@@ -177,6 +199,8 @@ class CompressorActivity : AppCompatActivity() {
         findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.ic_volume -> {
+                    record.stop()
+                    record.release()
                     val intent = Intent(this, VolumeActivity::class.java)
                     intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
@@ -184,6 +208,8 @@ class CompressorActivity : AppCompatActivity() {
                     true
                 }
                 R.id.ic_equalizer -> {
+                    record.stop()
+                    record.release()
                     val intent = Intent(this, EqualizerActivity::class.java)
                     intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
@@ -191,6 +217,8 @@ class CompressorActivity : AppCompatActivity() {
                     true
                 }
                 R.id.ic_fumolizer -> {
+                    record.stop()
+                    record.release()
                     val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
@@ -201,6 +229,8 @@ class CompressorActivity : AppCompatActivity() {
                     true
                 }
                 R.id.ic_settings -> {
+                    record.stop()
+                    record.release()
                     val intent = Intent(this, SettingsActivity::class.java)
                     intent.putExtra("barTitle", barTitle.text)
                     startActivity(intent)
@@ -236,15 +266,17 @@ class CompressorActivity : AppCompatActivity() {
             var greent = 0F
             var bluet = 0F
             var C = l * s
-            var X = (C * (1-Math.abs((h/60)%2-1)))
+            var X = (C * (1-Math.abs((h/60F)%2-1)))
             var m = l - C
 
-            if (h >= 0 && h < 60){redt=C; greent=X; bluet=0F}
-            else if (h >= 60 && h < 120){redt=X; greent=C; bluet=0F}
-            else if (h >= 120 && h < 180){redt=0F; greent=C; bluet=X}
-            else if (h >= 180 && h < 240){redt=0F; greent=X; bluet=C}
-            else if (h >= 240 && h < 300){redt=X; greent=0F; bluet=C}
-            else if (h >= 300 && h < 360){redt=C; greent=0F; bluet=X}
+            if (h in 0..59){redt=C; greent=X; bluet=0F}
+            else if (h in 60..119){redt=X; greent=C; bluet=0F}
+            else if (h in 120..179){redt=0F; greent=C; bluet=X}
+            else if (h in 180..239){redt=0F; greent=X; bluet=C}
+            else if (h in 240..299){redt=X; greent=0F; bluet=C}
+            else if (h in 300..359){redt=C; greent=0F; bluet=X}
+            else {redt=0F; greent=0F; bluet=0F}
+
             red = (redt+m)*255
             green = (greent+m)*255
             blue = (bluet+m)*255
@@ -253,10 +285,17 @@ class CompressorActivity : AppCompatActivity() {
 
         fun updateViews() {
             hsltorgb(hue,sat,light)
+            updateButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            recordButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            stopButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            for (i in 0..4){
+                var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
         }
 
 
@@ -292,7 +331,6 @@ class CompressorActivity : AppCompatActivity() {
 
     private fun recordBegin() {
 
-        //requestRecording()
         if (!isRecording) {
             maxAmpltiude = 0
             currentAmplitude = 0.0
@@ -312,7 +350,6 @@ class CompressorActivity : AppCompatActivity() {
         while (isRecording) {
 
             record.read(sData, 0, 1024)
-            var sDataMax = 0.0
 
             for (i in sData.indices) {
                 if (Math.abs(sData[i].toDouble()) >= maxAmpltiude) {
@@ -357,6 +394,12 @@ class CompressorActivity : AppCompatActivity() {
                         ActivityCompat.requestPermissions(this, permissions, 1)
                     }
                 }
+            }
+            if (resultCode == RESULT_CANCELED){
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("barTitle", findViewById<Button>(R.id.button_compressor_title).text)
+                startActivity(intent)
+                finish()
             }
         }
     }

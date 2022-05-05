@@ -20,6 +20,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.get
+import androidx.core.view.isNotEmpty
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -63,6 +66,8 @@ class SettingsActivity : AppCompatActivity() {
         val playButton = findViewById<ImageButton>(R.id.imageButton_settings_play)
 
         val barTitle = findViewById<Button>(R.id.button_settings_barTitle)
+
+        val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
         iF.addAction("com.android.music.metachanged")
         iF.addAction("com.htc.music.metachanged")
@@ -127,7 +132,10 @@ class SettingsActivity : AppCompatActivity() {
             playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
-
+            for (i in 0..4){
+                var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
         }
 
         loadData()
@@ -173,6 +181,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar?) {
@@ -181,6 +193,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
             }
 
             override fun onStopTrackingTouch(seekbar: SeekBar?) {
@@ -189,6 +205,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
                 saveData()
             }
         })
@@ -203,6 +223,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar?) {
@@ -211,6 +235,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
             }
 
             override fun onStopTrackingTouch(seekbar: SeekBar?) {
@@ -219,6 +247,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
                 saveData()
             }
         })
@@ -233,6 +265,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar?) {
@@ -241,6 +277,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
             }
 
             override fun onStopTrackingTouch(seekbar: SeekBar?) {
@@ -249,6 +289,10 @@ class SettingsActivity : AppCompatActivity() {
                 playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
                 barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                for (i in 0..4){
+                    var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                    bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+                }
                 saveData()
             }
         })

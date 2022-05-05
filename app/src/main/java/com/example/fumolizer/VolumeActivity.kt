@@ -13,6 +13,8 @@ import android.widget.ImageButton
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 
@@ -44,6 +46,9 @@ class VolumeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_volume)
 
         val seeker = findViewById(R.id.volumeBar) as SeekBar
+
+        val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
 
         seeker.max = maxVolume
         seeker.progress = currentVolume
@@ -223,6 +228,10 @@ class VolumeActivity : AppCompatActivity() {
             playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            for (i in 0..4){
+                var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
         }
 
 

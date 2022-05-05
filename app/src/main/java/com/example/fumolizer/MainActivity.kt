@@ -27,6 +27,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
 
@@ -61,6 +63,8 @@ class MainActivity : AppCompatActivity() {
 
         val barTitle = findViewById<Button>(R.id.button_main_title)
 
+        val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
         iF.addAction("com.android.music.metachanged")
         iF.addAction("com.htc.music.metachanged")
         iF.addAction("fm.last.android.metachanged")
@@ -77,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         iF.addAction("in.krosbits.musicolet.metachanged")
         iF.addAction("AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION")
         iF.addAction("AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION")
+
         if (intent == null){
             barTitle.text = "Error: Please change song"
         }
@@ -232,6 +237,10 @@ class MainActivity : AppCompatActivity() {
             playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             barTitle.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            for (i in 0..4){
+                var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
         }
 
 

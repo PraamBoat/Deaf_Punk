@@ -20,10 +20,10 @@
                 android:id="@+id/button_compressor_title"
                 android:layout_width="220dp"
                 android:layout_height="50dp"
+                android:autoSizeTextType="uniform"
                 android:backgroundTint="@color/purple_500"
                 android:enabled="false"
                 android:text="Button"
-                android:autoSizeTextType="uniform"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_compressor_back"
@@ -64,48 +64,97 @@
                 app:srcCompat="@drawable/ic_baseline_play_arrow_24"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-            <android.widget.VerticalSeekBar
-                android:id="@+id/compressorBar"
-                android:layout_width="wrap_content"
-                android:layout_height="350dp"
-                android:layout_gravity="center"
-                android:progress="50"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
-
             <Button
-                android:id="@+id/button"
+                android:id="@+id/button_compressor_record"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Record"
-                app:layout_constraintBottom_toTopOf="@+id/button_compressor_title"
-                app:layout_constraintEnd_toStartOf="@+id/compressorBar"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toTopOf="@+id/button_compressor_update"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline7"
+                app:layout_constraintTop_toBottomOf="@+id/textView_compressor_appTitle" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/button_compressor_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update"
+                app:layout_constraintBottom_toTopOf="@+id/button_compressor_stoprecording"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline7"
+                app:layout_constraintTop_toBottomOf="@+id/button_compressor_record" />
+
+            <Button
+                android:id="@+id/button_compressor_stoprecording"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Stop"
-                app:layout_constraintBottom_toTopOf="@+id/button_compressor_title"
+                app:layout_constraintBottom_toTopOf="@+id/imageButton_compressor_play"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/compressorBar"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="@+id/guideline7"
+                app:layout_constraintTop_toBottomOf="@+id/button_compressor_update" />
 
-            <Button
-                android:id="@+id/button3"
+            <TextView
+                android:id="@+id/textView_compressor_currentdB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Button"
-                app:layout_constraintBottom_toTopOf="@+id/button_compressor_title"
+                android:text="Current dB: xx"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toTopOf="@+id/textView_compressor_maxdB"
+                app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_compressor_appTitle" />
+
+            <TextView
+                android:id="@+id/textView_compressor_appTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="Compressor"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toTopOf="@+id/guideline8"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/compressorBar" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView_compressor_maxdB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max dB: xx"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toTopOf="@+id/textView_compressor_averagedB"
+                app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_compressor_currentdB" />
+
+            <TextView
+                android:id="@+id/textView_compressor_averagedB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Average dB: xx"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toTopOf="@+id/button_compressor_title"
+                app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_compressor_maxdB" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="238dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="61dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

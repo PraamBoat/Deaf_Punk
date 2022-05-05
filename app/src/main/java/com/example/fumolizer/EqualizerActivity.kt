@@ -23,7 +23,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.String
 import kotlin.AssertionError
@@ -64,6 +66,9 @@ class EqualizerActivity : AppCompatActivity() {
         val backButton = findViewById<ImageButton>(R.id.imageButton_equalizer_back)
         val playButton = findViewById<ImageButton>(R.id.imageButton_equalizer_play)
         val barTitle = findViewById<Button>(R.id.button_equalizer_title)
+
+        val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
 
         if (intent == null){
             barTitle.text = "Error: Please change song"
@@ -111,6 +116,10 @@ class EqualizerActivity : AppCompatActivity() {
             backButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             playButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
             barTitle.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
+            for (i in 0..4){
+                var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
+                bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
+            }
 
             if(switch.isChecked == isOn) {
                 val intent = Intent(this, BackgroundSoundService::class.java)
