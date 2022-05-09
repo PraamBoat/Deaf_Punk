@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
+import com.google.android.material.bottomnavigation.BottomNavigationMenu
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.AssertionError
@@ -144,6 +146,7 @@ class MainActivity : AppCompatActivity() {
             playButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
             backButton.setColorFilter(ContextCompat.getColor(this, R.color.black))
             barTitle.setTextColor((ContextCompat.getColor(this, R.color.black)))
+
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
