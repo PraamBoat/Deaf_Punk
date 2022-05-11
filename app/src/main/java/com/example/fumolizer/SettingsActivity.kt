@@ -434,7 +434,3 @@ class SettingsActivity : AppCompatActivity() {
         hex = sharedPreferences.getString(SAVEHEX,"#FFFFFF").toString()
     }
 }
-
-
-
-
