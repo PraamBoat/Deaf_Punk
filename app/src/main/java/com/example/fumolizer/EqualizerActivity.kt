@@ -4,6 +4,7 @@ package com.example.fumolizer
 import android.annotation.SuppressLint
 import android.content.*
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.media.audiofx.PresetReverb
 import android.view.MenuInflater
@@ -106,6 +107,14 @@ class EqualizerActivity : AppCompatActivity() {
 
         registerReceiver(broadCastReceiver, iF)
 
+        fun updateBottomBar() {
+            val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+            val isNightModeOn: Boolean = appSettingPrefs.getBoolean("NightMode", false)
+            if(!isNightModeOn) {
+                supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(rgbtohex(red,green,blue))))
+            }
+        }
+
         fun updateData() {
             presets.text = current
             switch.isChecked = isOn
@@ -120,6 +129,8 @@ class EqualizerActivity : AppCompatActivity() {
                 var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                 bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
+            this.window.statusBarColor = Color.parseColor(rgbtohex(red,green,blue))
+            updateBottomBar()
 
             if(switch.isChecked == isOn) {
                 val intent = Intent(this, BackgroundSoundService::class.java)

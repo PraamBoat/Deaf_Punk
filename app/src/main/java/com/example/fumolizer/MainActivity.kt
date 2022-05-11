@@ -8,6 +8,7 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -234,6 +235,14 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        fun updateBottomBar() {
+            val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+            val isNightModeOn: Boolean = appSettingPrefs.getBoolean("NightMode", false)
+            if(!isNightModeOn) {
+                supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(rgbtohex(red,green,blue))))
+            }
+        }
+
         fun updateViews() {
             hsltorgb(hue,sat,light)
             nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
@@ -244,6 +253,8 @@ class MainActivity : AppCompatActivity() {
                 var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                 bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
+            this.window.statusBarColor = Color.parseColor(rgbtohex(red,green,blue))
+            updateBottomBar()
         }
 
 

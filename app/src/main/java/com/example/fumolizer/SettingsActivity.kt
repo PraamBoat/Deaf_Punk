@@ -19,6 +19,8 @@ import com.example.fumolizer.Utilities.hsltorgb
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.drawable.ColorDrawable
+import android.provider.Settings
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.get
 import androidx.core.view.isNotEmpty
@@ -122,6 +124,14 @@ class SettingsActivity : AppCompatActivity() {
             startService(intent)
         }
 
+        fun updateBottomBar() {
+            val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+            val isNightModeOn: Boolean = appSettingPrefs.getBoolean("NightMode", false)
+            if(!isNightModeOn) {
+                supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(rgbtohex(red,green,blue))))
+            }
+        }
+
         fun updateViews() {
             hsltorgb(hue,sat,light)
             button.setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
@@ -136,6 +146,8 @@ class SettingsActivity : AppCompatActivity() {
                 var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                 bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
+            this.window.statusBarColor = Color.parseColor(rgbtohex(red,green,blue))
+            updateBottomBar()
         }
 
         loadData()
@@ -169,6 +181,9 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        fun updateTopWindow(){
+            this.window.statusBarColor = Color.parseColor(rgbtohex(red,green,blue))
+        }
 
         seekH.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -185,6 +200,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar?) {
@@ -197,6 +214,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
             }
 
             override fun onStopTrackingTouch(seekbar: SeekBar?) {
@@ -209,6 +228,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
                 saveData()
             }
         })
@@ -227,6 +248,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar?) {
@@ -239,6 +262,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
             }
 
             override fun onStopTrackingTouch(seekbar: SeekBar?) {
@@ -251,6 +276,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
                 saveData()
             }
         })
@@ -269,6 +296,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar?) {
@@ -281,6 +310,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
             }
 
             override fun onStopTrackingTouch(seekbar: SeekBar?) {
@@ -293,6 +324,8 @@ class SettingsActivity : AppCompatActivity() {
                     var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                     bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
                 }
+                updateTopWindow()
+                updateBottomBar()
                 saveData()
             }
         })

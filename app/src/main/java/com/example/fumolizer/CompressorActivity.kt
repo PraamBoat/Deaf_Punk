@@ -3,6 +3,7 @@ package com.example.fumolizer
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.*
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
@@ -13,6 +14,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -53,7 +55,6 @@ class CompressorActivity : AppCompatActivity() {
     var currentAmplitude = 0.0
     lateinit var recordingThread : Thread
     var currentDecibel = 0
-    var currentMaxdB = 0
     var lastFiveMaxdB = arrayOf(0, 0, 0, 0, 0)
 
 
@@ -91,10 +92,6 @@ class CompressorActivity : AppCompatActivity() {
                     bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
                     device.type).toInt()
             }
-            Log.v("decibel", "$currentAmplitude")
-            Log.v("decibel", "$maxAmpltiude")
-            Log.v("decibel", "$currentDecibel")
-            Log.v("decibel", (currentDecibel + 20 * log10(currentAmplitude)).toString())
 
             var returndB = (currentDecibel + 20 * log10(currentAmplitude)).toInt()
             if (returndB < 0){
@@ -121,6 +118,16 @@ class CompressorActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.textView_compressor_averagedB).text = "AveragdB: " +
                     "${((lastFiveMaxdB[0] + lastFiveMaxdB[1] + lastFiveMaxdB[2] + 
                             lastFiveMaxdB[3] + lastFiveMaxdB[4]) / 5)}"
+
+            val builder = AlertDialog.Builder(this)
+            if (returndB > 75){
+                builder.setTitle("Your music is too loud!")
+                builder.setMessage("Turn down the volume!")
+                builder.setPositiveButton("OK", DialogInterface.OnClickListener{
+                           dialog, i -> Log.v("compressor", "Closed Alert")
+                })
+                builder.show()
+            }
         }
 
 
@@ -283,6 +290,14 @@ class CompressorActivity : AppCompatActivity() {
 
         }
 
+        fun updateBottomBar() {
+            val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+            val isNightModeOn: Boolean = appSettingPrefs.getBoolean("NightMode", false)
+            if(!isNightModeOn) {
+                supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(rgbtohex(red,green,blue))))
+            }
+        }
+
         fun updateViews() {
             hsltorgb(hue,sat,light)
             updateButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
@@ -296,6 +311,8 @@ class CompressorActivity : AppCompatActivity() {
                 var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                 bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
+            this.window.statusBarColor = Color.parseColor(rgbtohex(red,green,blue))
+            updateBottomBar()
         }
 
 

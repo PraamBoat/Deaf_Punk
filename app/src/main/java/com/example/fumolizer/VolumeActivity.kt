@@ -3,6 +3,7 @@ package com.example.fumolizer
 
 import android.content.*
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.media.AudioManager
@@ -222,6 +223,14 @@ class VolumeActivity : AppCompatActivity() {
 
         }
 
+        fun updateBottomBar() {
+            val appSettingPrefs: SharedPreferences = getSharedPreferences( "AppSettingsPrefs", 0)
+            val isNightModeOn: Boolean = appSettingPrefs.getBoolean("NightMode", false)
+            if(!isNightModeOn) {
+                supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(rgbtohex(red,green,blue))))
+            }
+        }
+
         fun updateViews() {
             hsltorgb(hue,sat,light)
             nextButton.background.setTint(Color.parseColor(rgbtohex(red,green,blue)))
@@ -232,6 +241,8 @@ class VolumeActivity : AppCompatActivity() {
                 var bottomNavigationMenuView = bottomBar[0] as BottomNavigationMenuView
                 bottomNavigationMenuView[i].setBackgroundColor(Color.parseColor(rgbtohex(red,green,blue)))
             }
+            this.window.statusBarColor = Color.parseColor(rgbtohex(red,green,blue))
+            updateBottomBar()
         }
 
 
