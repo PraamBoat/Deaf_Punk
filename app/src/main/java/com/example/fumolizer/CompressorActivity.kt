@@ -140,6 +140,9 @@ class CompressorActivity : AppCompatActivity() {
             barTitle.text = intent.getStringExtra("barTitle")
         }
 
+        // add spotify
+        iF.addAction("com.spotify.music.metachanged")
+        iF.addAction("com.spotify.music.metadatachanged")
         iF.addAction("com.android.music.metachanged")
         iF.addAction("com.htc.music.metachanged")
         iF.addAction("fm.last.android.metachanged")
