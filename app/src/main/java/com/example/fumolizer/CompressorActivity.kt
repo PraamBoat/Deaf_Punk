@@ -88,11 +88,21 @@ class CompressorActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.button_compressor_update).setOnClickListener {
             val deviceInfo = bchan.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
-            for (device in deviceInfo){
+
+            val packageManager = packageManager
+            if (packageManager.hasSystemFeature(PackageManager.FEATURE_AUDIO_OUTPUT)) {
+                for (device in deviceInfo){
+                    currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
+                        bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
+                        device.type).toInt()
+                }
+            }
+
+            /*for (device in deviceInfo){
                 currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
                     bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
                     device.type).toInt()
-            }
+            }*/
 
             var returndB = (currentDecibel + 20 * log10(currentAmplitude)).toInt()
             if (returndB < 0){
@@ -140,6 +150,9 @@ class CompressorActivity : AppCompatActivity() {
             barTitle.text = intent.getStringExtra("barTitle")
         }
 
+        // add spotify
+        iF.addAction("com.spotify.music.metachanged")
+        iF.addAction("com.spotify.music.metadatachanged")
         iF.addAction("com.android.music.metachanged")
         iF.addAction("com.htc.music.metachanged")
         iF.addAction("fm.last.android.metachanged")
