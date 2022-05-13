@@ -98,11 +98,11 @@ class CompressorActivity : AppCompatActivity() {
                 }
             }
 
-            for (device in deviceInfo){
+            /*for (device in deviceInfo){
                 currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
                     bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
                     device.type).toInt()
-            }
+            }*/
 
             var returndB = (currentDecibel + 20 * log10(currentAmplitude)).toInt()
             if (returndB < 0){
