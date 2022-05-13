@@ -88,6 +88,16 @@ class CompressorActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.button_compressor_update).setOnClickListener {
             val deviceInfo = bchan.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+
+            val packageManager = packageManager
+            if (packageManager.hasSystemFeature(PackageManager.FEATURE_AUDIO_OUTPUT)) {
+                for (device in deviceInfo){
+                    currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
+                        bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
+                        device.type).toInt()
+                }
+            }
+
             for (device in deviceInfo){
                 currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
                     bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
