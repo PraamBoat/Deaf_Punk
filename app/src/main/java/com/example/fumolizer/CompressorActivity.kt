@@ -54,6 +54,7 @@ class CompressorActivity : AppCompatActivity() {
     var maxAmpltiude = 0
     var currentAmplitude = 0.0
     lateinit var recordingThread : Thread
+    lateinit var recordDb : Thread
     var currentDecibel = 0
     var lastFiveMaxdB = arrayOf(0, 0, 0, 0, 0)
 
@@ -87,22 +88,16 @@ class CompressorActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.button_compressor_update).setOnClickListener {
-            val deviceInfo = bchan.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+            var deviceInfo = bchan.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
 
             val packageManager = packageManager
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_AUDIO_OUTPUT)) {
                 for (device in deviceInfo){
                     currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
                         bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
-                        device.type).toInt()
+                        AudioDeviceInfo.TYPE_BUILTIN_SPEAKER).toInt()
                 }
             }
-
-            /*for (device in deviceInfo){
-                currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
-                    bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
-                    device.type).toInt()
-            }*/
 
             var returndB = (currentDecibel + 20 * log10(currentAmplitude)).toInt()
             if (returndB < 0){
@@ -126,15 +121,19 @@ class CompressorActivity : AppCompatActivity() {
             }
 
             findViewById<TextView>(R.id.textView_compressor_averagedB).text = "AveragdB: " +
-                    "${((lastFiveMaxdB[0] + lastFiveMaxdB[1] + lastFiveMaxdB[2] + 
+                    "${((lastFiveMaxdB[0] + lastFiveMaxdB[1] + lastFiveMaxdB[2] +
                             lastFiveMaxdB[3] + lastFiveMaxdB[4]) / 5)}"
 
             val builder = AlertDialog.Builder(this)
             if (returndB > 75){
+                val intent = Intent(this, BackgroundSoundService::class.java)
+                intent.putExtra("action", "playing")
+                startService(intent)
+
                 builder.setTitle("Your music is too loud!")
                 builder.setMessage("Turn down the volume!")
                 builder.setPositiveButton("OK", DialogInterface.OnClickListener{
-                           dialog, i -> Log.v("compressor", "Closed Alert")
+                        dialog, i -> Log.v("compressor", "Closed Alert")
                 })
                 builder.show()
             }
@@ -296,7 +295,6 @@ class CompressorActivity : AppCompatActivity() {
     }
 
     private fun recordBegin() {
-
         if (!isRecording) {
             maxAmpltiude = 0
             currentAmplitude = 0.0
@@ -307,8 +305,60 @@ class CompressorActivity : AppCompatActivity() {
             recordingThread = Thread({ writeAudioDataToFile() }, "AudioRecorder Thread")
             recordingThread.start()
         }
-
     }
+
+    /*private fun constantUpdateDb() {
+        var deviceInfo = bchan.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+
+        val packageManager = packageManager
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_AUDIO_OUTPUT)) {
+            for (device in deviceInfo){
+                currentDecibel = bchan.getStreamVolumeDb(AudioManager.STREAM_MUSIC,
+                    bchan.getStreamVolume(AudioManager.STREAM_MUSIC),
+                    AudioDeviceInfo.TYPE_BUILTIN_SPEAKER).toInt()
+            }
+        }
+
+        var returndB = (currentDecibel + 20 * log10(currentAmplitude)).toInt()
+        if (returndB < 0){
+            returndB = 0
+        }
+
+        findViewById<TextView>(R.id.textView_compressor_currentdB).text = "Current dB: ${returndB}"
+
+        var listMax = 0
+        for (i in 0..4){
+            if (i == 4){
+                lastFiveMaxdB[i] = returndB
+            }
+            else {
+                lastFiveMaxdB[i] = lastFiveMaxdB[i+1]
+            }
+            if (lastFiveMaxdB[i] > listMax){
+                listMax = lastFiveMaxdB[i]
+                findViewById<TextView>(R.id.textView_compressor_maxdB).text = "Max dB: ${listMax}"
+            }
+        }
+
+        findViewById<TextView>(R.id.textView_compressor_averagedB).text = "AveragdB: " +
+                "${((lastFiveMaxdB[0] + lastFiveMaxdB[1] + lastFiveMaxdB[2] +
+                        lastFiveMaxdB[3] + lastFiveMaxdB[4]) / 5)}"
+
+        val builder = AlertDialog.Builder(this)
+        if (returndB > 75){
+            val intent = Intent(this, BackgroundSoundService::class.java)
+            intent.putExtra("action", "playing")
+            startService(intent)
+
+            builder.setTitle("Your music is too loud!")
+            builder.setMessage("Turn down the volume!")
+            builder.setPositiveButton("OK", DialogInterface.OnClickListener{
+                    dialog, i -> Log.v("compressor", "Closed Alert")
+            })
+            builder.show()
+
+        }
+    } */
 
     private fun writeAudioDataToFile() {
 
@@ -325,8 +375,6 @@ class CompressorActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     private fun stopRecording() {
         // stops the recording activity
